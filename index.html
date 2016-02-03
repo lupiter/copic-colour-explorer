@@ -1,0 +1,3758 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+    <title>Copic Colours</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+    
+    <style type="text/css">
+	    rect.marker {
+		    fill: white;
+		    stroke-position: inside;
+	    }
+	    text.code, text.name {
+		    fill: white;
+		    text-anchor: middle;
+		    alignment-baseline: central;
+	    }
+	    text.code {
+		    font-size: 0.8em;
+	    }
+	    div.name {
+		    font-size: 0.5em;
+		    line-height: 1.1em;
+		    text-align: center;
+		    color: white;
+		    padding: 0 2px;
+		    overflow-y: hidden;
+		    text-overflow: ellipsis;
+	    }
+	    
+	    label {
+		    margin: 0;
+	    }
+	    
+	    .markers {
+		    display: block;
+		    margin: auto;
+	    }
+	    
+	    .marker:not(.selected), .code:not(.selected), .name:not(.selected) {
+		    opacity: 0.25;
+	    }
+	    
+	    .marker:not(.available), .code:not(.available), .name:not(.available) {
+		    opacity: 0.05;
+	    }
+	    
+	    .marker.missing {
+		    fill: white !important;
+		    opacity: 0.25;
+		    stroke: black;
+	    }
+	    
+	    .marker.highlighted {
+		    stroke: #eee;
+		    filter: url(#dropshadow);
+	    }
+	    
+	    .marker.highlighted:not(.available) {
+		    stroke: black;
+	    }
+	    
+    </style>
+  </head>
+  <body>
+    
+    <div class="container-fluid all m-t-1">
+	    <nav class="navbar navbar-light bg-faded">
+		  <a class="navbar-brand" href="#">Copic Colours</a>
+		  <div class="nav navbar-nav btn-group types" data-toggle="buttons">
+		  </div>
+		  
+		  <div class="pull-xs-right">
+				<div class="nav navbar-nav btn-group zoom" data-toggl="buttons">
+					<button type="button" class="btn btn-secondary zoom-in">+</button>
+			    <button type="button" class="btn btn-secondary zoom-out">-</button>
+			  </div>
+		  </div>
+		</nav>
+		
+		<div class="container-fluid main">
+	    
+	    <div class="container-fluid">
+	    	<div class="btn-group m-t-1 m-b-1 sets" data-toggle="buttons">
+				</div>
+	    </div>
+	    
+	    <svg class="markers container-fluid">
+	    	<filter id="dropshadow" height="130%">
+				  <feGaussianBlur in="SourceAlpha" stdDeviation="1"/> <!-- stdDeviation is how much to blur -->
+				  <feOffset dx="0" dy="0" result="offsetblur"/> <!-- how much to offset -->
+				  <feMerge> 
+				    <feMergeNode/> <!-- this contains the offset blurred image -->
+				    <feMergeNode in="SourceGraphic"/> <!-- this contains the element that the filter is applied to -->
+				  </feMerge>
+				</filter>
+	    
+		    <g class="colour-families">
+			    
+		    </g>
+		    <g class="colours">
+		    </g>
+		    
+		    <g class="labels">
+		    </g>
+		    
+		    <g class="names">
+		    </g>
+	    </svg>
+	    
+		</div>
+		    
+	    
+	    
+    </div>
+
+    <!-- jQuery first, then Bootstrap JS. -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    
+    <script charset="utf-8">
+    	var families = ["BV", "V", "RV", "R", "YR", "Y", "YG", "G", "BG", "B", "E", "C", "T", "W", "N", "F", "Other"];
+    	var colours = [
+	    	{
+		    	family: "BV",
+		    	saturation: "00",
+		    	brightness: "00",
+		    	name: "Pale Thistle",
+		    	code: "BV0000",
+		    	colour: "#E2DEEF"
+	    	},{
+		    	family: "BV",
+		    	saturation: "0",
+		    	brightness: "00",
+		    	name: "Iridescent Mauve",
+		    	code: "BV000",
+		    	colour: "#DFD6EA"
+	    	},{
+		    	family: "BV",
+		    	saturation: "0",
+		    	brightness: "0",
+		    	name: "Mauve Shadow",
+		    	code: "BV00",
+		    	colour: "#D8D1E9"
+	    	},{
+		    	family: "BV",
+		    	saturation: "0",
+		    	brightness: "1",
+		    	name: "Viola",
+		    	code: "BV01",
+		    	colour: "#B8BBDF"
+	    	},{
+		    	family: "BV",
+		    	saturation: "0",
+		    	brightness: "2",
+		    	name: "Prune",
+		    	code: "BV02",
+		    	colour: "#9BA7D3"
+	    	},{
+		    	family: "BV",
+		    	saturation: "0",
+		    	brightness: "4",
+		    	name: "Blue Berry",
+		    	code: "BV04",
+		    	colour: "#6A83C2"
+	    	},{
+		    	family: "BV",
+		    	saturation: "0",
+		    	brightness: "8",
+		    	name: "Blue Violet",
+		    	code: "BV08",
+		    	colour: "#8B67AB"
+	    	},{
+		    	family: "BV",
+		    	saturation: "1",
+		    	brightness: "1",
+		    	name: "Soft Violet",
+		    	code: "BV11",
+		    	colour: "#C9C6E3"
+	    	},{
+		    	family: "BV",
+		    	saturation: "1",
+		    	brightness: "3",
+		    	name: "Hydrangea Blue",
+		    	code: "BV13",
+		    	colour: "#717BBC"
+	    	},{
+		    	family: "BV",
+		    	saturation: "1",
+		    	brightness: "7",
+		    	name: "Deep Reddish Blue",
+		    	code: "BV17",
+		    	colour: "#5B6FAD"
+	    	},{
+		    	family: "BV",
+		    	saturation: "2",
+		    	brightness: "0",
+		    	name: "Dull Lavender",
+		    	code: "BV20",
+		    	colour: "#C4D1EC"
+	    	},{
+		    	family: "BV",
+		    	saturation: "2",
+		    	brightness: "3",
+		    	name: "Grayish Lavender",
+		    	code: "BV23",
+		    	colour: "#A0B1D3"
+	    	},{
+		    	family: "BV",
+		    	saturation: "2",
+		    	brightness: "5",
+		    	name: "Grayish Violet",
+		    	code: "BV25",
+		    	colour: "#6D6E95"
+	    	},{
+		    	family: "BV",
+		    	saturation: "2",
+		    	brightness: "9",
+		    	name: "Slate",
+		    	code: "BV29",
+		    	colour: "#2B3445"
+	    	},{
+		    	family: "BV",
+		    	saturation: "3",
+		    	brightness: "1",
+		    	name: "Pale Lavender",
+		    	code: "BV31",
+		    	colour: "#D4D9EE"
+	    	},{
+		    	family: "BV",
+		    	saturation: "3",
+		    	brightness: "4",
+		    	name: "Bluebell",
+		    	code: "BV34",
+		    	colour: "#8D95B0"
+	    	},
+	    	{
+		    	family: "V",
+		    	saturation: "00",
+		    	brightness: "00",
+		    	name: "Rose Quartz",
+		    	code: "V0000",
+		    	colour: "#EAE5F3"
+	    	},{
+		    	family: "V",
+		    	saturation: "00",
+		    	brightness: "0",
+		    	name: "Pale Heath",
+		    	code: "V000",
+		    	colour: "#E2DBEE"
+	    	},{
+		    	family: "V",
+		    	saturation: "0",
+		    	brightness: "1",
+		    	name: "Heath",
+		    	code: "V01",
+		    	colour: "#DCB1CF"
+	    	},{
+		    	family: "V",
+		    	saturation: "0",
+		    	brightness: "4",
+		    	name: "Lilac",
+		    	code: "V04",
+		    	colour: "#DC97C3"
+	    	},{
+		    	family: "V",
+		    	saturation: "0",
+		    	brightness: "5",
+		    	name: "Marigold",
+		    	code: "V05",
+		    	colour: "#D892BF"
+	    	},{
+		    	family: "V",
+		    	saturation: "0",
+		    	brightness: "6",
+		    	name: "Lavender",
+		    	code: "V06",
+		    	colour: "#C080B6"
+	    	},{
+		    	family: "V",
+		    	saturation: "0",
+		    	brightness: "9",
+		    	name: "Violet",
+		    	code: "V01",
+		    	colour: "#733D90"
+	    	},{
+		    	family: "V",
+		    	saturation: "1",
+		    	brightness: "2",
+		    	name: "Pale Lilac",
+		    	code: "V12",
+		    	colour: "#E6C9E2"
+	    	},{
+		    	family: "V",
+		    	saturation: "1",
+		    	brightness: "5",
+		    	name: "Mallow",
+		    	code: "V15",
+		    	colour: "#C694C2"
+	    	},{
+		    	family: "V",
+		    	saturation: "1",
+		    	brightness: "7",
+		    	name: "Amethyst",
+		    	code: "V17",
+		    	colour: "#8E7DB9"
+	    	},{
+		    	family: "V",
+		    	saturation: "2",
+		    	brightness: "0",
+		    	name: "Wisteria",
+		    	code: "V20",
+		    	colour: "#D5D3E4"
+	    	},{
+		    	family: "V",
+		    	saturation: "2",
+		    	brightness: "2",
+		    	name: "Ash Lavender",
+		    	code: "V22",
+		    	colour: "#A29EC3"
+	    	},{
+		    	family: "V",
+		    	saturation: "2",
+		    	brightness: "5",
+		    	name: "Pale Blackberry",
+		    	code: "V25",
+		    	colour: "#726A9D"
+	    	},{
+		    	family: "V",
+		    	saturation: "2",
+		    	brightness: "8",
+		    	name: "Eggplant",
+		    	code: "V28",
+		    	colour: "#585179"
+	    	},{
+		    	family: "V",
+		    	saturation: "9",
+		    	brightness: "1",
+		    	name: "Pale Grape",
+		    	code: "V91",
+		    	colour: "#E0B5C5"
+	    	},{
+		    	family: "V",
+		    	saturation: "9",
+		    	brightness: "3",
+		    	name: "Early Grape",
+		    	code: "V93",
+		    	colour: "#DCB1D3"
+	    	},{
+		    	family: "V",
+		    	saturation: "9",
+		    	brightness: "5",
+		    	name: "Light Grape",
+		    	code: "V95",
+		    	colour: "#A76595"
+	    	},{
+		    	family: "V",
+		    	saturation: "9",
+		    	brightness: "9",
+		    	name: "Aubergine",
+		    	code: "V99",
+		    	colour: "#413246"
+	    	},
+	    	{
+		    	family: "RV",
+		    	saturation: "00",
+		    	brightness: "00",
+		    	name: "Evening Primrose",
+		    	code: "RV0000",
+		    	colour: "#ECE1F0"
+	    	},{
+		    	family: "RV",
+		    	saturation: "0",
+		    	brightness: "00",
+		    	name: "Pale Purple",
+		    	code: "RV000",
+		    	colour: "#EDD8EA"
+	    	},{
+		    	family: "RV",
+		    	saturation: "0",
+		    	brightness: "0",
+		    	name: "Water Lily",
+		    	code: "RV00",
+		    	colour: "#EACEE4"
+	    	},{
+		    	family: "RV",
+		    	saturation: "0",
+		    	brightness: "2",
+		    	name: "Sugared Almond Pink",
+		    	code: "RV02",
+		    	colour: "#F9CADF"
+	    	},{
+		    	family: "RV",
+		    	saturation: "0",
+		    	brightness: "4",
+		    	name: "Shock Pink",
+		    	code: "RV04",
+		    	colour: "#F18EB0"
+	    	},{
+		    	family: "RV",
+		    	saturation: "0",
+		    	brightness: "6",
+		    	name: "Cerise",
+		    	code: "RV06",
+		    	colour: "#ED6E9E"
+	    	},{
+		    	family: "RV",
+		    	saturation: "0",
+		    	brightness: "9",
+		    	name: "Fuchsia",
+		    	code: "RV09",
+		    	colour: "#D5589D"
+	    	},{
+		    	family: "RV",
+		    	saturation: "1",
+		    	brightness: "0",
+		    	name: "Pale Pink",
+		    	code: "RV10",
+		    	colour: "#FCE5F0"
+	    	},{
+		    	family: "RV",
+		    	saturation: "1",
+		    	brightness: "1",
+		    	name: "Pink",
+		    	code: "RV11",
+		    	colour: "#FACBD4"
+	    	},{
+		    	family: "RV",
+		    	saturation: "1",
+		    	brightness: "3",
+		    	name: "Tender Pink",
+		    	code: "RV13",
+		    	colour: "#F7BBCE"
+	    	},{
+		    	family: "RV",
+		    	saturation: "1",
+		    	brightness: "4",
+		    	name: "Begonia Pink",
+		    	code: "RV14",
+		    	colour: "#EF7DA6"
+	    	},{
+		    	family: "RV",
+		    	saturation: "1",
+		    	brightness: "0",
+		    	name: "Deep Magenta",
+		    	code: "RV17",
+		    	colour: "#D066A5"
+	    	},{
+		    	family: "RV",
+		    	saturation: "1",
+		    	brightness: "9",
+		    	name: "Red Violet",
+		    	code: "RV19",
+		    	colour: "#C55098"
+	    	},{
+		    	family: "RV",
+		    	saturation: "2",
+		    	brightness: "1",
+		    	name: "Light Pink",
+		    	code: "RV21",
+		    	colour: "#FCE2E1"
+	    	},{
+		    	family: "RV",
+		    	saturation: "2",
+		    	brightness: "3",
+		    	name: "Pure Pink",
+		    	code: "RV23",
+		    	colour: "#F5AABA"
+	    	},{
+		    	family: "RV",
+		    	saturation: "2",
+		    	brightness: "5",
+		    	name: "Dog Rose Flower",
+		    	code: "RV25",
+		    	colour: "#EF7EB1"
+	    	},{
+		    	family: "RV",
+		    	saturation: "2",
+		    	brightness: "9",
+		    	name: "Crimson",
+		    	code: "RV29",
+		    	colour: "#E72D6C"
+	    	},{
+		    	family: "RV",
+		    	saturation: "3",
+		    	brightness: "2",
+		    	name: "Shadow Pink",
+		    	code: "RV32",
+		    	colour: "#FAC8C3"
+	    	},{
+		    	family: "RV",
+		    	saturation: "3",
+		    	brightness: "4",
+		    	name: "Dark Pink",
+		    	code: "RV34",
+		    	colour: "#F49D9E"
+	    	},{
+		    	family: "RV",
+		    	saturation: "4",
+		    	brightness: "2",
+		    	name: "Salmon Pink",
+		    	code: "RV42",
+		    	colour: "#F6ABA6"
+	    	},{
+		    	family: "RV",
+		    	saturation: "5",
+		    	brightness: "2",
+		    	name: "Cotton Candy",
+		    	code: "RV52",
+		    	colour: "#F6BBD6"
+	    	},{
+		    	family: "RV",
+		    	saturation: "5",
+		    	brightness: "5",
+		    	name: "Hollyhock",
+		    	code: "RV55",
+		    	colour: "#E192BF"
+	    	},{
+		    	family: "RV",
+		    	saturation: "6",
+		    	brightness: "3",
+		    	name: "Begonia",
+		    	code: "RV63",
+		    	colour: "#C3899B"
+	    	},{
+		    	family: "RV",
+		    	saturation: "6",
+		    	brightness: "6",
+		    	name: "Raspberry",
+		    	code: "RV66",
+		    	colour: "#A85471"
+	    	},{
+		    	family: "RV",
+		    	saturation: "6",
+		    	brightness: "9",
+		    	name: "Peony",
+		    	code: "RV69",
+		    	colour: "#77435C"
+	    	},{
+		    	family: "RV",
+		    	saturation: "9",
+		    	brightness: "1",
+		    	name: "Grayish Cherry",
+		    	code: "RV91",
+		    	colour: "#DAC5D9"
+	    	},{
+		    	family: "RV",
+		    	saturation: "9",
+		    	brightness: "3",
+		    	name: "Smokey Purple",
+		    	code: "RV93",
+		    	colour: "#DFA3BF"
+	    	},{
+		    	family: "RV",
+		    	saturation: "9",
+		    	brightness: "3",
+		    	name: "Baby Blossoms",
+		    	code: "RV95",
+		    	colour: "#A56E8F"
+	    	},{
+		    	family: "RV",
+		    	saturation: "9",
+		    	brightness: "9",
+		    	name: "Argyle Purple",
+		    	code: "RV99",
+		    	colour: "#473644"
+	    	},
+	    	{
+		    	family: "R",
+		    	saturation: "00",
+		    	brightness: "00",
+		    	name: "Pink Beryl",
+		    	code: "R0000",
+		    	colour: "#FEEDE7"
+	    	},{
+		    	family: "R",
+		    	saturation: "0",
+		    	brightness: "00",
+		    	name: "Cherry White",
+		    	code: "R000",
+		    	colour: "#FEE8DF"
+	    	},{
+		    	family: "R",
+		    	saturation: "0",
+		    	brightness: "0",
+		    	name: "Pinkish White",
+		    	code: "R00",
+		    	colour: "#FDE4D8"
+	    	},{
+		    	family: "R",
+		    	saturation: "0",
+		    	brightness: "1",
+		    	name: "Pinkish Vanilla",
+		    	code: "R01",
+		    	colour: "#FDD9D1"
+	    	},{
+		    	family: "R",
+		    	saturation: "0",
+		    	brightness: "2",
+		    	name: "Flesh",
+		    	code: "R02",
+		    	colour: "#FAC8BA"
+	    	},{
+		    	family: "R",
+		    	saturation: "0",
+		    	brightness: "5",
+		    	name: "Salmon Red",
+		    	code: "R05",
+		    	colour: "#F17C69"
+	    	},{
+		    	family: "R",
+		    	saturation: "0",
+		    	brightness: "8",
+		    	name: "Vermillion",
+		    	code: "R08",
+		    	colour: "#EB4E43"
+	    	},{
+		    	family: "R",
+		    	saturation: "1",
+		    	brightness: "1",
+		    	name: "Pale Cherry Pink",
+		    	code: "R11",
+		    	colour: "#FDDACA"
+	    	},{
+		    	family: "R",
+		    	saturation: "1",
+		    	brightness: "2",
+		    	name: "Light Tea Rose",
+		    	code: "R12",
+		    	colour: "#FAC9B4"
+	    	},{
+		    	family: "R",
+		    	saturation: "1",
+		    	brightness: "4",
+		    	name: "Light Rouse",
+		    	code: "R14",
+		    	colour: "#F28680"
+	    	},{
+		    	family: "R",
+		    	saturation: "1",
+		    	brightness: "7",
+		    	name: "Lipstick Orange",
+		    	code: "R17",
+		    	colour: "#EF6E59"
+	    	},{
+		    	family: "R",
+		    	saturation: "2",
+		    	brightness: "0",
+		    	name: "Blush",
+		    	code: "R20",
+		    	colour: "#FACDC6"
+	    	},{
+		    	family: "R",
+		    	saturation: "2",
+		    	brightness: "1",
+		    	name: "Sardonyx",
+		    	code: "R22",
+		    	colour: "#F8B2A8"
+	    	},{
+		    	family: "R",
+		    	saturation: "2",
+		    	brightness: "2",
+		    	name: "Light Prawn",
+		    	code: "R22",
+		    	colour: "#F5A6A3"
+	    	},{
+		    	family: "R",
+		    	saturation: "2",
+		    	brightness: "4",
+		    	name: "Prawn",
+		    	code: "R24",
+		    	colour: "#ED5D67"
+	    	},{
+		    	family: "R",
+		    	saturation: "2",
+		    	brightness: "7",
+		    	name: "Cadmium Red",
+		    	code: "R27",
+		    	colour: "#EA384E"
+	    	},{
+		    	family: "R",
+		    	saturation: "2",
+		    	brightness: "9",
+		    	name: "Lipstick Red",
+		    	code: "R29",
+		    	colour: "#E6003B"
+	    	},{
+		    	family: "R",
+		    	saturation: "3",
+		    	brightness: "0",
+		    	name: "Pale Yellowish Pink",
+		    	code: "R30",
+		    	colour: "#FCDCD6"
+	    	},{
+		    	family: "R",
+		    	saturation: "3",
+		    	brightness: "2",
+		    	name: "Peach",
+		    	code: "R32",
+		    	colour: "#F7B2AC"
+	    	},{
+		    	family: "R",
+		    	saturation: "3",
+		    	brightness: "5",
+		    	name: "Coral",
+		    	code: "R35",
+		    	colour: "#EC5971"
+	    	},{
+		    	family: "R",
+		    	saturation: "3",
+		    	brightness: "7",
+		    	name: "Carmine",
+		    	code: "R37",
+		    	colour: "#DD5460"
+	    	},{
+		    	family: "R",
+		    	saturation: "3",
+		    	brightness: "9",
+		    	name: "Garnet",
+		    	code: "R39",
+		    	colour: "#BA3167"
+	    	},{
+		    	family: "R",
+		    	saturation: "4",
+		    	brightness: "3",
+		    	name: "Bougainvillaea",
+		    	code: "R43",
+		    	colour: "#E56C7B"
+	    	},{
+		    	family: "R",
+		    	saturation: "4",
+		    	brightness: "6",
+		    	name: "Strong Red",
+		    	code: "R46",
+		    	colour: "#D53556"
+	    	},{
+		    	family: "R",
+		    	saturation: "5",
+		    	brightness: "6",
+		    	name: "Currant",
+		    	code: "R56",
+		    	colour: "#C46583"
+	    	},{
+		    	family: "R",
+		    	saturation: "5",
+		    	brightness: "9",
+		    	name: "Cardinal",
+		    	code: "R59",
+		    	colour: "#A53A5D"
+	    	},{
+		    	family: "R",
+		    	saturation: "8",
+		    	brightness: "1",
+		    	name: "Rose Pink",
+		    	code: "R81",
+		    	colour: "#EBB9C8"
+	    	},{
+		    	family: "R",
+		    	saturation: "8",
+		    	brightness: "3",
+		    	name: "Rose Mist",
+		    	code: "R83",
+		    	colour: "#E886A8"
+	    	},{
+		    	family: "R",
+		    	saturation: "8",
+		    	brightness: "5",
+		    	name: "Rose Red",
+		    	code: "R85",
+		    	colour: "#C45080"
+	    	},{
+		    	family: "R",
+		    	saturation: "8",
+		    	brightness: "9",
+		    	name: "Dark Red",
+		    	code: "R89",
+		    	colour: "#681C32"
+	    	},
+	    	{
+		    	family: "YR",
+		    	saturation: "00",
+		    	brightness: "00",
+		    	name: "Pale Chiffon",
+		    	code: "YR0000",
+		    	colour: "#FFEEDD"
+	    	},{
+		    	family: "YR",
+		    	saturation: "00",
+		    	brightness: "0",
+		    	name: "Slik",
+		    	code: "YR000",
+		    	colour: "#FEE5CE"
+	    	},{
+		    	family: "YR",
+		    	saturation: "0",
+		    	brightness: "0",
+		    	name: "Powder Pink",
+		    	code: "YR00",
+		    	colour: "#FBCDB0"
+	    	},{
+		    	family: "YR",
+		    	saturation: "0",
+		    	brightness: "1",
+		    	name: "Peach Puff",
+		    	code: "YR01",
+		    	colour: "#FDD2B4"
+	    	},{
+		    	family: "YR",
+		    	saturation: "0",
+		    	brightness: "2",
+		    	name: "Light Orange",
+		    	code: "YR02",
+		    	colour: "#FDD4B9"
+	    	},{
+		    	family: "YR",
+		    	saturation: "0",
+		    	brightness: "4",
+		    	name: "Chrome Orange",
+		    	code: "YR04",
+		    	colour: "#FCB756"
+	    	},{
+		    	family: "YR",
+		    	saturation: "0",
+		    	brightness: "7",
+		    	name: "Cadmium Orange",
+		    	code: "YR07",
+		    	colour: "#EE592D"
+	    	},{
+		    	family: "YR",
+		    	saturation: "0",
+		    	brightness: "9",
+		    	name: "Chinese Orange",
+		    	code: "YR09",
+		    	colour: "#EA3E1C"
+	    	},{
+		    	family: "YR",
+		    	saturation: "1",
+		    	brightness: "2",
+		    	name: "Loquat",
+		    	code: "YR12",
+		    	colour: "#FEDB94"
+	    	},{
+		    	family: "YR",
+		    	saturation: "1",
+		    	brightness: "4",
+		    	name: "Caramel",
+		    	code: "YR14",
+		    	colour: "#FEBF3E"
+	    	},{
+		    	family: "YR",
+		    	saturation: "1",
+		    	brightness: "5",
+		    	name: "Pumpkin Yellow",
+		    	code: "YR15",
+		    	colour: "#F8A772"
+	    	},{
+		    	family: "YR",
+		    	saturation: "1",
+		    	brightness: "6",
+		    	name: "Apricot",
+		    	code: "YR16",
+		    	colour: "#FAAB1F"
+	    	},{
+		    	family: "YR",
+		    	saturation: "1",
+		    	brightness: "8",
+		    	name: "Sanguine",
+		    	code: "YR18",
+		    	colour: "#EC552E"
+	    	},{
+		    	family: "YR",
+		    	saturation: "2",
+		    	brightness: "0",
+		    	name: "Yellowish Shade",
+		    	code: "YR20",
+		    	colour: "#FEDBB3"
+	    	},{
+		    	family: "YR",
+		    	saturation: "2",
+		    	brightness: "1",
+		    	name: "Cream",
+		    	code: "YR21",
+		    	colour: "#F0D4A1"
+	    	},{
+		    	family: "YR",
+		    	saturation: "2",
+		    	brightness: "3",
+		    	name: "Yellow Ochre",
+		    	code: "YR23",
+		    	colour: "#E5C477"
+	    	},{
+		    	family: "YR",
+		    	saturation: "2",
+		    	brightness: "4",
+		    	name: "Pale Sepia",
+		    	code: "YR24",
+		    	colour: "#EBC751"
+	    	},{
+		    	family: "YR",
+		    	saturation: "2",
+		    	brightness: "7",
+		    	name: "Tuscan Orange",
+		    	code: "YR27",
+		    	colour: "#C9502B"
+	    	},{
+		    	family: "YR",
+		    	saturation: "3",
+		    	brightness: "0",
+		    	name: "Macadamia Nut",
+		    	code: "YR30",
+		    	colour: "#FFEDD0"
+	    	},{
+		    	family: "YR",
+		    	saturation: "3",
+		    	brightness: "1",
+		    	name: "Light Reddish Yellow",
+		    	code: "YR31",
+		    	colour: "#FED796"
+	    	},{
+		    	family: "YR",
+		    	saturation: "6",
+		    	brightness: "1",
+		    	name: "Yellowish Skin Pink",
+		    	code: "YR61",
+		    	colour: "#FDD2B7"
+	    	},{
+		    	family: "YR",
+		    	saturation: "6",
+		    	brightness: "5",
+		    	name: "Atoli",
+		    	code: "YR65",
+		    	colour: "#F89E4E"
+	    	},{
+		    	family: "YR",
+		    	saturation: "6",
+		    	brightness: "8",
+		    	name: "Orange",
+		    	code: "YR68",
+		    	colour: "#EE591B"
+	    	},{
+		    	family: "YR",
+		    	saturation: "8",
+		    	brightness: "2",
+		    	name: "Mellow Peach",
+		    	code: "YR82",
+		    	colour: "#FBB97B"
+	    	},
+	    	{
+		    	family: "Y",
+		    	saturation: "00",
+		    	brightness: "00",
+		    	name: "Yellow Fluorite",
+		    	code: "Y0000",
+		    	colour: "#FFFEEF"
+	    	},{
+		    	family: "Y",
+		    	saturation: "0",
+		    	brightness: "00",
+		    	name: "Pale Lemon",
+		    	code: "Y000",
+		    	colour: "#FFFEE3"
+	    	},{
+		    	family: "Y",
+		    	saturation: "0",
+		    	brightness: "0",
+		    	name: "Barium Yellow",
+		    	code: "Y00",
+		    	colour: "#FFFDD7"
+	    	},{
+		    	family: "Y",
+		    	saturation: "0",
+		    	brightness: "2",
+		    	name: "Canary Yellow",
+		    	code: "Y02",
+		    	colour: "#F7F285"
+	    	},{
+		    	family: "Y",
+		    	saturation: "0",
+		    	brightness: "4",
+		    	name: "Acacia",
+		    	code: "Y04",
+		    	colour: "#E9DF44"
+	    	},{
+		    	family: "Y",
+		    	saturation: "0",
+		    	brightness: "6",
+		    	name: "Yellow",
+		    	code: "Y06",
+		    	colour: "#FEF55B"
+	    	},{
+		    	family: "Y",
+		    	saturation: "0",
+		    	brightness: "8",
+		    	name: "Acid Yellow",
+		    	code: "Y08",
+		    	colour: "#FEF30A"
+	    	},{
+		    	family: "Y",
+		    	saturation: "1",
+		    	brightness: "1",
+		    	name: "Pale Yellow",
+		    	code: "Y11",
+		    	colour: "#FFFBC1"
+	    	},{
+		    	family: "Y",
+		    	saturation: "1",
+		    	brightness: "3",
+		    	name: "Lemon Yellow",
+		    	code: "Y13",
+		    	colour: "#FCF69E"
+	    	},{
+		    	family: "Y",
+		    	saturation: "1",
+		    	brightness: "5",
+		    	name: "Cadmium Yellow",
+		    	code: "Y15",
+		    	colour: "#FEE45B"
+	    	},{
+		    	family: "Y",
+		    	saturation: "1",
+		    	brightness: "7",
+		    	name: "Golden Yellow",
+		    	code: "Y17",
+		    	colour: "#FEDE44"
+	    	},{
+		    	family: "Y",
+		    	saturation: "1",
+		    	brightness: "8",
+		    	name: "Lightning Yellow",
+		    	code: "Y18",
+		    	colour: "#FEEA46"
+	    	},{
+		    	family: "Y",
+		    	saturation: "1",
+		    	brightness: "9",
+		    	name: "Napoli Yellow",
+		    	code: "Y19",
+		    	colour: "#FEE532"
+	    	},{
+		    	family: "Y",
+		    	saturation: "2",
+		    	brightness: "1",
+		    	name: "Buttercup Yellow",
+		    	code: "Y21",
+		    	colour: "#FEE9B3"
+	    	},{
+		    	family: "Y",
+		    	saturation: "2",
+		    	brightness: "3",
+		    	name: "Yellowish Beige",
+		    	code: "Y23",
+		    	colour: "#FADDA6"
+	    	},{
+		    	family: "Y",
+		    	saturation: "2",
+		    	brightness: "6",
+		    	name: "Mustard",
+		    	code: "Y26",
+		    	colour: "#EBD355"
+	    	},{
+		    	family: "Y",
+		    	saturation: "2",
+		    	brightness: "8",
+		    	name: "Lionet Gold",
+		    	code: "Y28",
+		    	colour: "#BC9957"
+	    	},{
+		    	family: "Y",
+		    	saturation: "3",
+		    	brightness: "2",
+		    	name: "Cashmere",
+		    	code: "Y32",
+		    	colour: "#F5D5B3"
+	    	},{
+		    	family: "Y",
+		    	saturation: "3",
+		    	brightness: "5",
+		    	name: "Maize",
+		    	code: "Y35",
+		    	colour: "#FECF67"
+	    	},{
+		    	family: "Y",
+		    	saturation: "3",
+		    	brightness: "8",
+		    	name: "Honey",
+		    	code: "Y38",
+		    	colour: "#FEC962"
+	    	},
+	    	{
+		    	family: "YG",
+		    	saturation: "00",
+		    	brightness: "00",
+		    	name: "Lily White",
+		    	code: "YG0000",
+		    	colour: "#EEF5D6"
+	    	},{
+		    	family: "YG",
+		    	saturation: "0",
+		    	brightness: "00",
+		    	name: "Mimosa Yellow",
+		    	code: "YG000",
+		    	colour: "#E0E08C"
+	    	},{
+		    	family: "YG",
+		    	saturation: "0",
+		    	brightness: "0",
+		    	name: "Green Bice",
+		    	code: "YG01",
+		    	colour: "#DDE9A2"
+	    	},{
+		    	family: "YG",
+		    	saturation: "0",
+		    	brightness: "3",
+		    	name: "Yellow Green",
+		    	code: "YG03",
+		    	colour: "#D9E79A"
+	    	},{
+		    	family: "YG",
+		    	saturation: "0",
+		    	brightness: "5",
+		    	name: "Salad",
+		    	code: "YG05",
+		    	colour: "#CFE280"
+	    	},{
+		    	family: "YG",
+		    	saturation: "0",
+		    	brightness: "6",
+		    	name: "Yellowish Green",
+		    	code: "YG06",
+		    	colour: "#B9D97F"
+	    	},{
+		    	family: "YG",
+		    	saturation: "0",
+		    	brightness: "7",
+		    	name: "Acid Green",
+		    	code: "YG07",
+		    	colour: "#96C83C"
+	    	},{
+		    	family: "YG",
+		    	saturation: "0",
+		    	brightness: "9",
+		    	name: "Lettuce Green",
+		    	code: "YG09",
+		    	colour: "#70BC53"
+	    	},{
+		    	family: "YG",
+		    	saturation: "1",
+		    	brightness: "1",
+		    	name: "Mignonette",
+		    	code: "YG11",
+		    	colour: "#DCEDC4"
+	    	},{
+		    	family: "YG",
+		    	saturation: "1",
+		    	brightness: "3",
+		    	name: "Chartreuse",
+		    	code: "YG13",
+		    	colour: "#CBE28E"
+	    	},{
+		    	family: "YG",
+		    	saturation: "1",
+		    	brightness: "7",
+		    	name: "Grass Green",
+		    	code: "YG17",
+		    	colour: "#62B746"
+	    	},{
+		    	family: "YG",
+		    	saturation: "2",
+		    	brightness: "1",
+		    	name: "Anise",
+		    	code: "YG21",
+		    	colour: "#F5F4B0"
+	    	},{
+		    	family: "YG",
+		    	saturation: "2",
+		    	brightness: "3",
+		    	name: "New Leaf",
+		    	code: "YG23",
+		    	colour: "#E2E97F"
+	    	},{
+		    	family: "YG",
+		    	saturation: "2",
+		    	brightness: "5",
+		    	name: "Celadon Green",
+		    	code: "YG25",
+		    	colour: "#C6DC6A"
+	    	},{
+		    	family: "YG",
+		    	saturation: "4",
+		    	brightness: "1",
+		    	name: "Pale Cobalt Green",
+		    	code: "YG41",
+		    	colour: "#CDE7CB"
+	    	},{
+		    	family: "YG",
+		    	saturation: "4",
+		    	brightness: "5",
+		    	name: "Cobalt Green",
+		    	code: "YG45",
+		    	colour: "#A7D7A8"
+	    	},{
+		    	family: "YG",
+		    	saturation: "6",
+		    	brightness: "1",
+		    	name: "Pale Moss",
+		    	code: "YG61",
+		    	colour: "#CBE1CB"
+	    	},{
+		    	family: "YG",
+		    	saturation: "6",
+		    	brightness: "3",
+		    	name: "Pea Green",
+		    	code: "YG63",
+		    	colour: "#90C08F"
+	    	},{
+		    	family: "YG",
+		    	saturation: "6",
+		    	brightness: "7",
+		    	name: "Moss",
+		    	code: "YG67",
+		    	colour: "#6EB378"
+	    	},{
+		    	family: "YG",
+		    	saturation: "9",
+		    	brightness: "1",
+		    	name: "Putty",
+		    	code: "YG91",
+		    	colour: "#D2CFA0"
+	    	},{
+		    	family: "YG",
+		    	saturation: "9",
+		    	brightness: "3",
+		    	name: "Grayish Yellow",
+		    	code: "YG93",
+		    	colour: "#C7C98B"
+	    	},{
+		    	family: "YG",
+		    	saturation: "9",
+		    	brightness: "5",
+		    	name: "Pale Olive",
+		    	code: "YG95",
+		    	colour: "#BFBD4C"
+	    	},{
+		    	family: "YG",
+		    	saturation: "9",
+		    	brightness: "7",
+		    	name: "Spanish Olive",
+		    	code: "YG97",
+		    	colour: "#807F04"
+	    	},{
+		    	family: "YG",
+		    	saturation: "9",
+		    	brightness: "9",
+		    	name: "Marine Green",
+		    	code: "YG99",
+		    	colour: "#3E5911"
+	    	},
+	    	{
+		    	family: "G",
+		    	saturation: "00",
+		    	brightness: "00",
+		    	name: "Crystal Opal",
+		    	code: "G0000",
+		    	colour: "#ECF6EF"
+	    	},{
+		    	family: "G",
+		    	saturation: "0",
+		    	brightness: "00",
+		    	name: "Pale Green",
+		    	code: "G000",
+		    	colour: "#E4F2E7"
+	    	},{
+		    	family: "G",
+		    	saturation: "0",
+		    	brightness: "0",
+		    	name: "Jade Green",
+		    	code: "G00",
+		    	colour: "#DDF0E6"
+	    	},{
+		    	family: "G",
+		    	saturation: "0",
+		    	brightness: "2",
+		    	name: "Spectrum Green",
+		    	code: "G02",
+		    	colour: "#C4E4C9"
+	    	},{
+		    	family: "G",
+		    	saturation: "0",
+		    	brightness: "3",
+		    	name: "Meadow Green",
+		    	code: "G03",
+		    	colour: "#A8D38A"
+	    	},{
+		    	family: "G",
+		    	saturation: "0",
+		    	brightness: "5",
+		    	name: "Emerald Green",
+		    	code: "G05",
+		    	colour: "#5AB667"
+	    	},{
+		    	family: "G",
+		    	saturation: "0",
+		    	brightness: "7",
+		    	name: "Nile Green",
+		    	code: "G07",
+		    	colour: "#6BBC65"
+	    	},{
+		    	family: "G",
+		    	saturation: "0",
+		    	brightness: "9",
+		    	name: "Veronese Green",
+		    	code: "G09",
+		    	colour: "#6BBA53"
+	    	},{
+		    	family: "G",
+		    	saturation: "1",
+		    	brightness: "2",
+		    	name: "Sea Green",
+		    	code: "G12",
+		    	colour: "#C9E4B8"
+	    	},{
+		    	family: "G",
+		    	saturation: "1",
+		    	brightness: "4",
+		    	name: "Apple Green",
+		    	code: "G14",
+		    	colour: "#87C67D"
+	    	},{
+		    	family: "G",
+		    	saturation: "1",
+		    	brightness: "6",
+		    	name: "Malachite",
+		    	code: "G16",
+		    	colour: "#51B786"
+	    	},{
+		    	family: "G",
+		    	saturation: "1",
+		    	brightness: "7",
+		    	name: "Forrest Green",
+		    	code: "G17",
+		    	colour: "#16A76C"
+	    	},{
+		    	family: "G",
+		    	saturation: "1",
+		    	brightness: "9",
+		    	name: "Bright Parrot Green",
+		    	code: "G19",
+		    	colour: "#2FAE77"
+	    	},{
+		    	family: "G",
+		    	saturation: "2",
+		    	brightness: "0",
+		    	name: "Wax White",
+		    	code: "G20",
+		    	colour: "#E9F3D1"
+	    	},{
+		    	family: "G",
+		    	saturation: "2",
+		    	brightness: "1",
+		    	name: "Lime Green",
+		    	code: "G21",
+		    	colour: "#B9DEC2"
+	    	},{
+		    	family: "G",
+		    	saturation: "2",
+		    	brightness: "4",
+		    	name: "Willow",
+		    	code: "G24",
+		    	colour: "#B6DCA4"
+	    	},{
+		    	family: "G",
+		    	saturation: "2",
+		    	brightness: "8",
+		    	name: "Ocean Green",
+		    	code: "G28",
+		    	colour: "#11834F"
+	    	},{
+		    	family: "G",
+		    	saturation: "2",
+		    	brightness: "9",
+		    	name: "Pine Tree Green",
+		    	code: "G29",
+		    	colour: "#1C6A4A"
+	    	},{
+		    	family: "G",
+		    	saturation: "4",
+		    	brightness: "0",
+		    	name: "Dim Green",
+		    	code: "G40",
+		    	colour: "#DFEFD5"
+	    	},{
+		    	family: "G",
+		    	saturation: "4",
+		    	brightness: "3",
+		    	name: "Pistachio",
+		    	code: "G43",
+		    	colour: "#CEE498"
+	    	},{
+		    	family: "G",
+		    	saturation: "4",
+		    	brightness: "6",
+		    	name: "Mistletoe",
+		    	code: "G46",
+		    	colour: "#488F61"
+	    	},{
+		    	family: "G",
+		    	saturation: "8",
+		    	brightness: "2",
+		    	name: "Spring Dim Green",
+		    	code: "G82",
+		    	colour: "#C1D2AC"
+	    	},{
+		    	family: "G",
+		    	saturation: "8",
+		    	brightness: "5",
+		    	name: "Verdigris",
+		    	code: "G85",
+		    	colour: "#8DB799"
+	    	},{
+		    	family: "G",
+		    	saturation: "8",
+		    	brightness: "4",
+		    	name: "Grayish Olive",
+		    	code: "G94",
+		    	colour: "#859672"
+	    	},{
+		    	family: "G",
+		    	saturation: "9",
+		    	brightness: "9",
+		    	name: "Olive",
+		    	code: "G99",
+		    	colour: "#4D6D2C"
+	    	},
+	    	{
+		    	family: "BG",
+		    	saturation: "00",
+		    	brightness: "00",
+		    	name: "Snow Green",
+		    	code: "BG0000",
+		    	colour: "#E9F4ED"
+	    	},{
+		    	family: "BG",
+		    	saturation: "0",
+		    	brightness: "00",
+		    	name: "Pale Aqua",
+		    	code: "BG000",
+		    	colour: "#E0F1E8"
+	    	},{
+		    	family: "BG",
+		    	saturation: "0",
+		    	brightness: "0",
+		    	name: "Aqua Blue",
+		    	code: "BG00",
+		    	colour: "#BCDEF6"
+	    	},{
+		    	family: "BG",
+		    	saturation: "0",
+		    	brightness: "1",
+		    	name: "New Blue",
+		    	code: "BG01",
+		    	colour: "#BBE3E4"
+	    	},{
+		    	family: "BG",
+		    	saturation: "0",
+		    	brightness: "5",
+		    	name: "Holiday Blue",
+		    	code: "BG05",
+		    	colour: "#73C8DC"
+	    	},{
+		    	family: "BG",
+		    	saturation: "0",
+		    	brightness: "7",
+		    	name: "Petroleum Blue",
+		    	code: "BG07",
+		    	colour: "#17A7C1"
+	    	},{
+		    	family: "BG",
+		    	saturation: "0",
+		    	brightness: "9",
+		    	name: "Blue Green",
+		    	code: "BG09",
+		    	colour: "#14A1BB"
+	    	},{
+		    	family: "BG",
+		    	saturation: "1",
+		    	brightness: "0",
+		    	name: "Cool Shadow",
+		    	code: "BG10",
+		    	colour: "#D6EEEA"
+	    	},{
+		    	family: "BG",
+		    	saturation: "1",
+		    	brightness: "1",
+		    	name: "Moon White",
+		    	code: "BG11",
+		    	colour: "#C4E7EB"
+	    	},{
+		    	family: "BG",
+		    	saturation: "1",
+		    	brightness: "3",
+		    	name: "Mint Green",
+		    	code: "BG13",
+		    	colour: "#B8E2E3"
+	    	},{
+		    	family: "BG",
+		    	saturation: "1",
+		    	brightness: "5",
+		    	name: "Aqua",
+		    	code: "BG15",
+		    	colour: "#92D1C8"
+	    	},{
+		    	family: "BG",
+		    	saturation: "1",
+		    	brightness: "8",
+		    	name: "Teal Blue",
+		    	code: "BG18",
+		    	colour: "#39B3A0"
+	    	},{
+		    	family: "BG",
+		    	saturation: "2",
+		    	brightness: "3",
+		    	name: "Coral Sea",
+		    	code: "BG23",
+		    	colour: "#B2DED4"
+	    	},{
+		    	family: "BG",
+		    	saturation: "3",
+		    	brightness: "2",
+		    	name: "Aqua Mint",
+		    	code: "BG32",
+		    	colour: "#AFDDCE"
+	    	},{
+		    	family: "BG",
+		    	saturation: "3",
+		    	brightness: "4",
+		    	name: "Horizon Green",
+		    	code: "BG34",
+		    	colour: "#94D3CE"
+	    	},{
+		    	family: "BG",
+		    	saturation: "4",
+		    	brightness: "5",
+		    	name: "Nile Blue",
+		    	code: "BG45",
+		    	colour: "#A1D9D8"
+	    	},{
+		    	family: "BG",
+		    	saturation: "4",
+		    	brightness: "9",
+		    	name: "Duck Blue",
+		    	code: "BG49",
+		    	colour: "#16A9AA"
+	    	},{
+		    	family: "BG",
+		    	saturation: "5",
+		    	brightness: "3",
+		    	name: "Ice Mint",
+		    	code: "BG53",
+		    	colour: "#9EC4C7"
+	    	},{
+		    	family: "BG",
+		    	saturation: "5",
+		    	brightness: "7",
+		    	name: "Jasper",
+		    	code: "BG57",
+		    	colour: "#57B1B0"
+	    	},{
+		    	family: "BG",
+		    	saturation: "7",
+		    	brightness: "0",
+		    	name: "Ocean Mist",
+		    	code: "BG70",
+		    	colour: "#D3E4E5"
+	    	},{
+		    	family: "BG",
+		    	saturation: "7",
+		    	brightness: "2",
+		    	name: "Ice Ocean",
+		    	code: "BG72",
+		    	colour: "#65A9AE"
+	    	},{
+		    	family: "BG",
+		    	saturation: "7",
+		    	brightness: "5",
+		    	name: "Abyss Green",
+		    	code: "BG75",
+		    	colour: "#497F7D"
+	    	},{
+		    	family: "BG",
+		    	saturation: "7",
+		    	brightness: "8",
+		    	name: "Bronze",
+		    	code: "BG78",
+		    	colour: "#395D57"
+	    	},{
+		    	family: "BG",
+		    	saturation: "9",
+		    	brightness: "0",
+		    	name: "Gray Sky",
+		    	code: "BG90",
+		    	colour: "#DFE3DB"
+	    	},{
+		    	family: "BG",
+		    	saturation: "9",
+		    	brightness: "3",
+		    	name: "Green Gray",
+		    	code: "BG93",
+		    	colour: "#ACB2A7"
+	    	},{
+		    	family: "BG",
+		    	saturation: "9",
+		    	brightness: "6",
+		    	name: "Blush",
+		    	code: "BG96",
+		    	colour: "#6F907D"
+	    	},{
+		    	family: "BG",
+		    	saturation: "9",
+		    	brightness: "9",
+		    	name: "Flagstone Blue",
+		    	code: "BG99",
+		    	colour: "#5C8B76"
+	    	},
+	    	{
+		    	family: "B",
+		    	saturation: "00",
+		    	brightness: "00",
+		    	name: "Pale Celestine",
+		    	code: "B0000",
+		    	colour: "#EBF7FE"
+	    	},{
+		    	family: "B",
+		    	saturation: "0",
+		    	brightness: "00",
+		    	name: "Pale Porcelain Blue",
+		    	code: "B000",
+		    	colour: "#E0F2F0"
+	    	},{
+		    	family: "B",
+		    	saturation: "0",
+		    	brightness: "0",
+		    	name: "Frost Blue",
+		    	code: "B00",
+		    	colour: "#D6EEEF"
+	    	},{
+		    	family: "B",
+		    	saturation: "0",
+		    	brightness: "1",
+		    	name: "Mint Blue",
+		    	code: "B01",
+		    	colour: "#CCEAED"
+	    	},{
+		    	family: "B",
+		    	saturation: "0",
+		    	brightness: "2",
+		    	name: "Robbin's Egg Blue",
+		    	code: "B02",
+		    	colour: "#A5DBE9"
+	    	},{
+		    	family: "B",
+		    	saturation: "0",
+		    	brightness: "4",
+		    	name: "Tahitian Blue",
+		    	code: "B04",
+		    	colour: "#62C3DF"
+	    	},{
+		    	family: "B",
+		    	saturation: "0",
+		    	brightness: "5",
+		    	name: "Process Blue",
+		    	code: "B05",
+		    	colour: "#39B8DF"
+	    	},{
+		    	family: "B",
+		    	saturation: "0",
+		    	brightness: "6",
+		    	name: "Peacock Blue",
+		    	code: "B06",
+		    	colour: "#15A2DF"
+	    	},{
+		    	family: "B",
+		    	saturation: "1",
+		    	brightness: "2",
+		    	name: "Ice Blue",
+		    	code: "B12",
+		    	colour: "#BDDEE7"
+	    	},{
+		    	family: "B",
+		    	saturation: "1",
+		    	brightness: "4",
+		    	name: "Light Blue",
+		    	code: "B14",
+		    	colour: "#61C4E5"
+	    	},{
+		    	family: "B",
+		    	saturation: "1",
+		    	brightness: "6",
+		    	name: "Cyanine Blue",
+		    	code: "B16",
+		    	colour: "#16AEE4"
+	    	},{
+		    	family: "B",
+		    	saturation: "1",
+		    	brightness: "8",
+		    	name: "Lapis Lazuli",
+		    	code: "B18",
+		    	colour: "#1575C0"
+	    	},{
+		    	family: "B",
+		    	saturation: "2",
+		    	brightness: "1",
+		    	name: "Baby Blue",
+		    	code: "B21",
+		    	colour: "#D4E7F7"
+	    	},{
+		    	family: "B",
+		    	saturation: "2",
+		    	brightness: "3",
+		    	name: "Phthalo Blue",
+		    	code: "B23",
+		    	colour: "#81B5E3"
+	    	},{
+		    	family: "B",
+		    	saturation: "2",
+		    	brightness: "4",
+		    	name: "Sky",
+		    	code: "B24",
+		    	colour: "#79C2EE"
+	    	},{
+		    	family: "B",
+		    	saturation: "2",
+		    	brightness: "6",
+		    	name: "Cobalt Blue",
+		    	code: "B26",
+		    	colour: "#55A2DC"
+	    	},{
+		    	family: "B",
+		    	saturation: "2",
+		    	brightness: "8",
+		    	name: "Royal Blue",
+		    	code: "B28",
+		    	colour: "#1B57A6"
+	    	},{
+		    	family: "B",
+		    	saturation: "2",
+		    	brightness: "9",
+		    	name: "Ultramarine",
+		    	code: "B29",
+		    	colour: "#0C61B2"
+	    	},{
+		    	family: "B",
+		    	saturation: "3",
+		    	brightness: "2",
+		    	name: "Pale Blue",
+		    	code: "B32",
+		    	colour: "#DBE8F0"
+	    	},{
+		    	family: "B",
+		    	saturation: "3",
+		    	brightness: "4",
+		    	name: "Manganese Blue",
+		    	code: "B34",
+		    	colour: "#6FB5E6"
+	    	},{
+		    	family: "B",
+		    	saturation: "3",
+		    	brightness: "7",
+		    	name: "Antwerp Blue",
+		    	code: "B37",
+		    	colour: "#125B92"
+	    	},{
+		    	family: "B",
+		    	saturation: "3",
+		    	brightness: "9",
+		    	name: "Prussian Blue",
+		    	code: "B39",
+		    	colour: "#234E99"
+	    	},{
+		    	family: "B",
+		    	saturation: "4",
+		    	brightness: "1",
+		    	name: "Powder Blue",
+		    	code: "B41",
+		    	colour: "#DBE9F8"
+	    	},{
+		    	family: "B",
+		    	saturation: "4",
+		    	brightness: "5",
+		    	name: "Smokey Blue",
+		    	code: "B45",
+		    	colour: "#64B1E6"
+	    	},{
+		    	family: "B",
+		    	saturation: "5",
+		    	brightness: "2",
+		    	name: "Soft Greenish Blue",
+		    	code: "B52",
+		    	colour: "#9EC0D3"
+	    	},{
+		    	family: "B",
+		    	saturation: "6",
+		    	brightness: "0",
+		    	name: "Pale Blue Gray",
+		    	code: "B60",
+		    	colour: "#D0D8EE"
+	    	},{
+		    	family: "B",
+		    	saturation: "6",
+		    	brightness: "3",
+		    	name: "Light Hydrangea",
+		    	code: "B63",
+		    	colour: "#97ABD9"
+	    	},{
+		    	family: "B",
+		    	saturation: "6",
+		    	brightness: "6",
+		    	name: "Clematis",
+		    	code: "B66",
+		    	colour: "#5672B8"
+	    	},{
+		    	family: "B",
+		    	saturation: "6",
+		    	brightness: "9",
+		    	name: "Stratospheric Blue",
+		    	code: "B69",
+		    	colour: "#184F9E"
+	    	},{
+		    	family: "B",
+		    	saturation: "7",
+		    	brightness: "9",
+		    	name: "Iris",
+		    	code: "B79",
+		    	colour: "#2E338C"
+	    	},{
+		    	family: "B",
+		    	saturation: "9",
+		    	brightness: "1",
+		    	name: "Pale Grayish Blue",
+		    	code: "B91",
+		    	colour: "#CCDAE1"
+	    	},{
+		    	family: "B",
+		    	saturation: "9",
+		    	brightness: "3",
+		    	name: "Light Crockery Blue",
+		    	code: "B93",
+		    	colour: "#85B4D1"
+	    	},{
+		    	family: "B",
+		    	saturation: "9",
+		    	brightness: "5",
+		    	name: "Light Grayish Cobalt",
+		    	code: "B95",
+		    	colour: "#55B7C4"
+	    	},{
+		    	family: "B",
+		    	saturation: "9",
+		    	brightness: "7",
+		    	name: "Night Blue",
+		    	code: "B97",
+		    	colour: "#386688"
+	    	},{
+		    	family: "B",
+		    	saturation: "9",
+		    	brightness: "9",
+		    	name: "Agate",
+		    	code: "B99",
+		    	colour: "#11416A"
+	    	},
+	    	{
+		    	family: "E",
+		    	saturation: "00",
+		    	brightness: "00",
+		    	name: "Floral White",
+		    	code: "E0000",
+		    	colour: "#FFF6ED"
+	    	},{
+		    	family: "E",
+		    	saturation: "0",
+		    	brightness: "00",
+		    	name: "Pale Fruit Pink",
+		    	code: "E000",
+		    	colour: "#FFF0E5"
+	    	},{
+		    	family: "E",
+		    	saturation: "0",
+		    	brightness: "0",
+		    	name: "Skin White",
+		    	code: "E00",
+		    	colour: "#FEEEE2"
+	    	},{
+		    	family: "E",
+		    	saturation: "0",
+		    	brightness: "1",
+		    	name: "Pink Flamingo",
+		    	code: "E01",
+		    	colour: "#FEE9DA"
+	    	},{
+		    	family: "E",
+		    	saturation: "0",
+		    	brightness: "2",
+		    	name: "Fruit Pink",
+		    	code: "E02",
+		    	colour: "#FEE6D7"
+	    	},{
+		    	family: "E",
+		    	saturation: "0",
+		    	brightness: "4",
+		    	name: "Lipstick Natural",
+		    	code: "E04",
+		    	colour: "#D9ABB5"
+	    	},{
+		    	family: "E",
+		    	saturation: "0",
+		    	brightness: "7",
+		    	name: "Light Mahogany",
+		    	code: "E07",
+		    	colour: "#BD6C58"
+	    	},{
+		    	family: "E",
+		    	saturation: "0",
+		    	brightness: "8",
+		    	name: "Brown",
+		    	code: "E08",
+		    	colour: "#BB4F41"
+	    	},{
+		    	family: "E",
+		    	saturation: "0",
+		    	brightness: "9",
+		    	name: "Burnt Sienna",
+		    	code: "E09",
+		    	colour: "#CA523E"
+	    	},{
+		    	family: "E",
+		    	saturation: "1",
+		    	brightness: "1",
+		    	name: "Bareley Beige",
+		    	code: "E11",
+		    	colour: "#FEE3CD"
+	    	},{
+		    	family: "E",
+		    	saturation: "1",
+		    	brightness: "3",
+		    	name: "Light Suntan",
+		    	code: "E13",
+		    	colour: "#DEB69F"
+	    	},{
+		    	family: "E",
+		    	saturation: "1",
+		    	brightness: "5",
+		    	name: "Dark Suntan",
+		    	code: "E15",
+		    	colour: "#F9AC79"
+	    	},{
+		    	family: "E",
+		    	saturation: "1",
+		    	brightness: "7",
+		    	name: "Reddish Brass",
+		    	code: "E17",
+		    	colour: "#A64C45"
+	    	},{
+		    	family: "E",
+		    	saturation: "1",
+		    	brightness: "8",
+		    	name: "Copper",
+		    	code: "E18",
+		    	colour: "#733F3B"
+	    	},{
+		    	family: "E",
+		    	saturation: "1",
+		    	brightness: "9",
+		    	name: "Redwood",
+		    	code: "E19",
+		    	colour: "#B53F2B"
+	    	},{
+		    	family: "E",
+		    	saturation: "2",
+		    	brightness: "1",
+		    	name: "Baby Skin Pink",
+		    	code: "E21",
+		    	colour: "#FEDCBD"
+	    	},{
+		    	family: "E",
+		    	saturation: "2",
+		    	brightness: "3",
+		    	name: "Hazelnut",
+		    	code: "E23",
+		    	colour: "#E4BCA0"
+	    	},{
+		    	family: "E",
+		    	saturation: "2",
+		    	brightness: "5",
+		    	name: "Caribe Cocoa",
+		    	code: "E25",
+		    	colour: "#C8926F"
+	    	},{
+		    	family: "E",
+		    	saturation: "2",
+		    	brightness: "7",
+		    	name: "Africano",
+		    	code: "E27",
+		    	colour: "#856250"
+	    	},{
+		    	family: "E",
+		    	saturation: "2",
+		    	brightness: "9",
+		    	name: "Burnt Umber",
+		    	code: "E29",
+		    	colour: "#74342A"
+	    	},{
+		    	family: "E",
+		    	saturation: "3",
+		    	brightness: "0",
+		    	name: "Bisque",
+		    	code: "E30",
+		    	colour: "#F5E7CA"
+	    	},{
+		    	family: "E",
+		    	saturation: "3",
+		    	brightness: "1",
+		    	name: "Brick Beige",
+		    	code: "E31",
+		    	colour: "#EEDBBF"
+	    	},{
+		    	family: "E",
+		    	saturation: "3",
+		    	brightness: "3",
+		    	name: "Sand",
+		    	code: "E33",
+		    	colour: "#ECC5A0"
+	    	},{
+		    	family: "E",
+		    	saturation: "3",
+		    	brightness: "4",
+		    	name: "Orientale",
+		    	code: "E34",
+		    	colour: "#EABE94"
+	    	},{
+		    	family: "E",
+		    	saturation: "3",
+		    	brightness: "5",
+		    	name: "Chamois",
+		    	code: "E35",
+		    	colour: "#DFB792"
+	    	},{
+		    	family: "E",
+		    	saturation: "3",
+		    	brightness: "7",
+		    	name: "Sepia",
+		    	code: "E37",
+		    	colour: "#BF7F48"
+	    	},{
+		    	family: "E",
+		    	saturation: "3",
+		    	brightness: "9",
+		    	name: "Leather",
+		    	code: "E39",
+		    	colour: "#B96030"
+	    	},{
+		    	family: "E",
+		    	saturation: "4",
+		    	brightness: "0",
+		    	name: "Brick White",
+		    	code: "E40",
+		    	colour: "#EFE0D1"
+	    	},{
+		    	family: "E",
+		    	saturation: "4",
+		    	brightness: "1",
+		    	name: "Pearl White",
+		    	code: "E41",
+		    	colour: "#FEEBD9"
+	    	},{
+		    	family: "E",
+		    	saturation: "4",
+		    	brightness: "2",
+		    	name: "Sand White",
+		    	code: "E42",
+		    	colour: "#EEE1CD"
+	    	},{
+		    	family: "E",
+		    	saturation: "4",
+		    	brightness: "3",
+		    	name: "Dull Ivory",
+		    	code: "E43",
+		    	colour: "#E3D3AF"
+	    	},{
+		    	family: "E",
+		    	saturation: "4",
+		    	brightness: "4",
+		    	name: "Clay",
+		    	code: "E44",
+		    	colour: "#B9AB98"
+	    	},{
+		    	family: "E",
+		    	saturation: "4",
+		    	brightness: "7",
+		    	name: "Dark Brown",
+		    	code: "E47",
+		    	colour: "#755B48"
+	    	},{
+		    	family: "E",
+		    	saturation: "4",
+		    	brightness: "9",
+		    	name: "Dark Bark",
+		    	code: "E49",
+		    	colour: "#4F3B2D"
+	    	},{
+		    	family: "E",
+		    	saturation: "5",
+		    	brightness: "0",
+		    	name: "Egg White",
+		    	code: "E50",
+		    	colour: "#EDE3E7"
+	    	},{
+		    	family: "E",
+		    	saturation: "5",
+		    	brightness: "1",
+		    	name: "Milky White",
+		    	code: "E51",
+		    	colour: "#FEE5CD"
+	    	},{
+		    	family: "E",
+		    	saturation: "5",
+		    	brightness: "3",
+		    	name: "Raw Silk",
+		    	code: "E53",
+		    	colour: "#EFDCB3"
+	    	},{
+		    	family: "E",
+		    	saturation: "5",
+		    	brightness: "5",
+		    	name: "Light Camel",
+		    	code: "E55",
+		    	colour: "#ECD4A9"
+	    	},{
+		    	family: "E",
+		    	saturation: "5",
+		    	brightness: "7",
+		    	name: "Light Walnut",
+		    	code: "E57",
+		    	colour: "#A37247"
+	    	},{
+		    	family: "E",
+		    	saturation: "5",
+		    	brightness: "9",
+		    	name: "Walnut",
+		    	code: "E59",
+		    	colour: "#876C59"
+	    	},{
+		    	family: "E",
+		    	saturation: "7",
+		    	brightness: "0",
+		    	name: "Ash Rose",
+		    	code: "E70",
+		    	colour: "#EBE2DE"
+	    	},{
+		    	family: "E",
+		    	saturation: "7",
+		    	brightness: "1",
+		    	name: "Champagne",
+		    	code: "E71",
+		    	colour: "#DBCEC9"
+	    	},{
+		    	family: "E",
+		    	saturation: "7",
+		    	brightness: "4",
+		    	name: "Cocoa Brown",
+		    	code: "E74",
+		    	colour: "#907268"
+	    	},{
+		    	family: "E",
+		    	saturation: "7",
+		    	brightness: "7",
+		    	name: "Maroon",
+		    	code: "E77",
+		    	colour: "#6A4C3D"
+	    	},{
+		    	family: "E",
+		    	saturation: "7",
+		    	brightness: "9",
+		    	name: "Cashew",
+		    	code: "E79",
+		    	colour: "#3A211A"
+	    	},{
+		    	family: "E",
+		    	saturation: "8",
+		    	brightness: "1",
+		    	name: "Ivory",
+		    	code: "E81",
+		    	colour: "#EADEB3"
+	    	},{
+		    	family: "E",
+		    	saturation: "8",
+		    	brightness: "4",
+		    	name: "Khaki",
+		    	code: "E84",
+		    	colour: "#9B8C6C"
+	    	},{
+		    	family: "E",
+		    	saturation: "8",
+		    	brightness: "7",
+		    	name: "Fig",
+		    	code: "E87",
+		    	colour: "#5B4E3D"
+	    	},{
+		    	family: "E",
+		    	saturation: "8",
+		    	brightness: "9",
+		    	name: "Pecan",
+		    	code: "E89",
+		    	colour: "#47392A"
+	    	},{
+		    	family: "E",
+		    	saturation: "9",
+		    	brightness: "3",
+		    	name: "Tea Rose",
+		    	code: "E93",
+		    	colour: "#FBC8AA"
+	    	},{
+		    	family: "E",
+		    	saturation: "9",
+		    	brightness: "5",
+		    	name: "Flesh Pink",
+		    	code: "E95",
+		    	colour: "#F9AE6C"
+	    	},{
+		    	family: "E",
+		    	saturation: "9",
+		    	brightness: "7",
+		    	name: "Deep Orange",
+		    	code: "E97",
+		    	colour: "#E5894C"
+	    	},{
+		    	family: "E",
+		    	saturation: "9",
+		    	brightness: "9",
+		    	name: "Baked Clay",
+		    	code: "E99",
+		    	colour: "#A34D27"
+	    	},
+	    	{
+		    	family: "C",
+		    	saturation: "-",
+		    	brightness: "00",
+		    	name: "Cool Grey No.00",
+		    	code: "C-00",
+		    	colour: "#DDE9EE"
+	    	},{
+		    	family: "C",
+		    	saturation: "-",
+		    	brightness: "0",
+		    	name: "Cool Grey No.0",
+		    	code: "C-0",
+		    	colour: "#D6E0E6"
+	    	},{
+		    	family: "C",
+		    	saturation: "-",
+		    	brightness: "1",
+		    	name: "Cool Grey No.1",
+		    	code: "C-1",
+		    	colour: "#CFDBE1"
+	    	},{
+		    	family: "C",
+		    	saturation: "-",
+		    	brightness: "2",
+		    	name: "Cool Grey No.2",
+		    	code: "C-2",
+		    	colour: "#BECCD5"
+	    	},{
+		    	family: "C",
+		    	saturation: "-",
+		    	brightness: "3",
+		    	name: "Cool Grey No.3",
+		    	code: "C-3",
+		    	colour: "#B1BDC7"
+	    	},{
+		    	family: "C",
+		    	saturation: "-",
+		    	brightness: "4",
+		    	name: "Cool Grey No.4",
+		    	code: "C-4",
+		    	colour: "#95A4B0"
+	    	},{
+		    	family: "C",
+		    	saturation: "-",
+		    	brightness: "5",
+		    	name: "Cool Grey No.5",
+		    	code: "C-5",
+		    	colour: "#7F8D99"
+	    	},{
+		    	family: "C",
+		    	saturation: "-",
+		    	brightness: "6",
+		    	name: "Cool Grey No.6",
+		    	code: "C-6",
+		    	colour: "#697883"
+	    	},{
+		    	family: "C",
+		    	saturation: "-",
+		    	brightness: "7",
+		    	name: "Cool Grey No.7",
+		    	code: "C-7",
+		    	colour: "#515D66"
+	    	},{
+		    	family: "C",
+		    	saturation: "-",
+		    	brightness: "8",
+		    	name: "Cool Grey No.8",
+		    	code: "C-8",
+		    	colour: "#414A52"
+	    	},{
+		    	family: "C",
+		    	saturation: "-",
+		    	brightness: "9",
+		    	name: "Cool Grey No.9",
+		    	code: "C-9",
+		    	colour: "#2E363C"
+	    	},{
+		    	family: "C",
+		    	saturation: "-",
+		    	brightness: "10",
+		    	name: "Cool Grey No.10",
+		    	code: "C-10",
+		    	colour: "#1A2026"
+	    	},
+	    	{
+		    	family: "T",
+		    	saturation: "-",
+		    	brightness: "0",
+		    	name: "Toner Grey No.0",
+		    	code: "T-0",
+		    	colour: "#E6E6E7"
+	    	},{
+		    	family: "T",
+		    	saturation: "-",
+		    	brightness: "1",
+		    	name: "Toner Grey No.1",
+		    	code: "T-1",
+		    	colour: "#E4E4E1"
+	    	},{
+		    	family: "T",
+		    	saturation: "-",
+		    	brightness: "2",
+		    	name: "Toner Grey No.2",
+		    	code: "T-2",
+		    	colour: "#D9DAD5"
+	    	},{
+		    	family: "T",
+		    	saturation: "-",
+		    	brightness: "3",
+		    	name: "Toner Grey No.3",
+		    	code: "T-3",
+		    	colour: "#C8C8C0"
+	    	},{
+		    	family: "T",
+		    	saturation: "-",
+		    	brightness: "4",
+		    	name: "Toner Grey No.4",
+		    	code: "T-4",
+		    	colour: "#AEADA9"
+	    	},{
+		    	family: "T",
+		    	saturation: "-",
+		    	brightness: "5",
+		    	name: "Toner Grey No.5",
+		    	code: "T-5",
+		    	colour: "#979591"
+	    	},{
+		    	family: "T",
+		    	saturation: "-",
+		    	brightness: "6",
+		    	name: "Toner Grey No.6",
+		    	code: "T-6",
+		    	colour: "#82817C"
+	    	},{
+		    	family: "T",
+		    	saturation: "-",
+		    	brightness: "7",
+		    	name: "Toner Grey No.7",
+		    	code: "T-7",
+		    	colour: "#646360"
+	    	},{
+		    	family: "T",
+		    	saturation: "-",
+		    	brightness: "8",
+		    	name: "Toner Grey No.8",
+		    	code: "T-8",
+		    	colour: "#504F4D"
+	    	},{
+		    	family: "T",
+		    	saturation: "-",
+		    	brightness: "9",
+		    	name: "Toner Grey No.9",
+		    	code: "T-9",
+		    	colour: "#3C3A39"
+	    	},{
+		    	family: "T",
+		    	saturation: "-",
+		    	brightness: "10",
+		    	name: "Toner Grey No.10",
+		    	code: "T-10",
+		    	colour: "#262422"
+	    	},
+			{
+		    	family: "N",
+		    	saturation: "-",
+		    	brightness: "0",
+		    	name: "Neutral Grey No.0",
+		    	code: "N-0",
+		    	colour: "#E6E6E7"
+	    	},{
+		    	family: "N",
+		    	saturation: "-",
+		    	brightness: "1",
+		    	name: "Neutral Grey No.1",
+		    	code: "N-1",
+		    	colour: "#DBDCDD"
+	    	},{
+		    	family: "N",
+		    	saturation: "-",
+		    	brightness: "2",
+		    	name: "Neutral Grey No.2",
+		    	code: "N-2",
+		    	colour: "#D1D3D4"
+	    	},{
+		    	family: "N",
+		    	saturation: "-",
+		    	brightness: "3",
+		    	name: "Neutral Grey No.3",
+		    	code: "N-3",
+		    	colour: "#C7C9CA"
+	    	},{
+		    	family: "N",
+		    	saturation: "-",
+		    	brightness: "4",
+		    	name: "Neutral Grey No.4",
+		    	code: "N-4",
+		    	colour: "#AEB0B3"
+	    	},{
+		    	family: "N",
+		    	saturation: "-",
+		    	brightness: "5",
+		    	name: "Neutral Grey No.5",
+		    	code: "N-5",
+		    	colour: "#96989C"
+	    	},{
+		    	family: "N",
+		    	saturation: "-",
+		    	brightness: "6",
+		    	name: "Neutral Grey No.6",
+		    	code: "N-6",
+		    	colour: "#818386"
+	    	},{
+		    	family: "N",
+		    	saturation: "-",
+		    	brightness: "7",
+		    	name: "Neutral Grey No.7",
+		    	code: "N-7",
+		    	colour: "#646568"
+	    	},{
+		    	family: "N",
+		    	saturation: "-",
+		    	brightness: "8",
+		    	name: "Neutral Grey No.8",
+		    	code: "N-8",
+		    	colour: "#505153"
+	    	},{
+		    	family: "N",
+		    	saturation: "-",
+		    	brightness: "9",
+		    	name: "Neutral Grey No.9",
+		    	code: "N-9",
+		    	colour: "#3C3C3E"
+	    	},{
+		    	family: "N",
+		    	saturation: "-",
+		    	brightness: "10",
+		    	name: "Neutral Grey No.10",
+		    	code: "N-10",
+		    	colour: "#262526"
+	    	},
+	    	{
+		    	family: "W",
+		    	saturation: "-",
+		    	brightness: "00",
+		    	name: "Warm Grey No.00",
+		    	code: "W-00",
+		    	colour: "#EFEEE2"
+	    	},{
+		    	family: "W",
+		    	saturation: "-",
+		    	brightness: "0",
+		    	name: "Warm Grey No.0",
+		    	code: "W-0",
+		    	colour: "#E7E5DB"
+	    	},{
+		    	family: "W",
+		    	saturation: "-",
+		    	brightness: "1",
+		    	name: "Warm Grey No.1",
+		    	code: "W-1",
+		    	colour: "#E1E0D6"
+	    	},{
+		    	family: "W",
+		    	saturation: "-",
+		    	brightness: "2",
+		    	name: "Warm Grey No.2",
+		    	code: "W-2",
+		    	colour: "#D5D4CB"
+	    	},{
+		    	family: "W",
+		    	saturation: "-",
+		    	brightness: "3",
+		    	name: "Warm Grey No.3",
+		    	code: "W-3",
+		    	colour: "#C8C8BF"
+	    	},{
+		    	family: "W",
+		    	saturation: "-",
+		    	brightness: "4",
+		    	name: "Warm Grey No.4",
+		    	code: "W-4",
+		    	colour: "#AFB0A7"
+	    	},{
+		    	family: "W",
+		    	saturation: "-",
+		    	brightness: "5",
+		    	name: "Warm Grey No.5",
+		    	code: "W-5",
+		    	colour: "#979891"
+	    	},{
+		    	family: "W",
+		    	saturation: "-",
+		    	brightness: "6",
+		    	name: "Warm Grey No.6",
+		    	code: "W-6",
+		    	colour: "#82837C"
+	    	},{
+		    	family: "W",
+		    	saturation: "-",
+		    	brightness: "7",
+		    	name: "Warm Grey No.7",
+		    	code: "W-7",
+		    	colour: "#646560"
+	    	},{
+		    	family: "W",
+		    	saturation: "-",
+		    	brightness: "",
+		    	name: "Warm Grey No.08",
+		    	code: "W-8",
+		    	colour: "#50504D"
+	    	},{
+		    	family: "W",
+		    	saturation: "-",
+		    	brightness: "9",
+		    	name: "Warm Grey No.9",
+		    	code: "W-9",
+		    	colour: "#3C3B39"
+	    	},{
+		    	family: "W",
+		    	saturation: "-",
+		    	brightness: "10",
+		    	name: "Warm Grey No.10",
+		    	code: "W-10",
+		    	colour: "#262422"
+	    	},
+	    	{
+		    	family: "F",
+		    	saturation: "RV",
+		    	brightness: "1",
+		    	name: "Fluorescent Pink",
+		    	code: "FRV1",
+		    	colour: "#F08FBB"
+	    	},{
+		    	family: "F",
+		    	saturation: "YR",
+		    	brightness: "1",
+		    	name: "Fluorescent Orange",
+		    	code: "FYR1",
+		    	colour: "#FBC288"
+	    	},{
+		    	family: "F",
+		    	saturation: "Y",
+		    	brightness: "1",
+		    	name: "Fluorescent Yellow Orange",
+		    	code: "FY1",
+		    	colour: "#FFF886"
+	    	},{
+		    	family: "F",
+		    	saturation: "YG",
+		    	brightness: "1",
+		    	name: "Fluorescent Yellow",
+		    	code: "FYG1",
+		    	colour: "#C6D790"
+	    	},{
+		    	family: "F",
+		    	saturation: "V",
+		    	brightness: "2",
+		    	name: "Fluorescent Dull Violet",
+		    	code: "FV2",
+		    	colour: "#6B5EA7"
+	    	},{
+		    	family: "F",
+		    	saturation: "YG",
+		    	brightness: "2",
+		    	name: "Fluorescent Dull Yellow Green",
+		    	code: "FYG2",
+		    	colour: "#8EC433"
+	    	},{
+		    	family: "F",
+		    	saturation: "BG",
+		    	brightness: "2",
+		    	name: "Fluorescent Dull Blue Green",
+		    	code: "FBG2",
+		    	colour: "#55C0E0"
+	    	},{
+		    	family: "F",
+		    	saturation: "B",
+		    	brightness: "2",
+		    	name: "Fluorescent Dull Blue",
+		    	code: "FB2",
+		    	colour: "#0F7AC6"
+	    	},
+	    	{
+		    	family: "Other",
+		    	saturation: "0",
+		    	brightness: "",
+		    	name: "Colourless Blender",
+		    	code: "0",
+		    	colour: "#FFFFFF"
+	    	},
+	    	{
+		    	family: "Other",
+		    	saturation: "1",
+		    	brightness: "00",
+		    	name: "Black",
+		    	code: "100",
+		    	colour: "#262221"
+	    	},
+	    	{
+		    	family: "Other",
+		    	saturation: "1",
+		    	brightness: "10",
+		    	name: "Special Black",
+		    	code: "110",
+		    	colour: "#1A1718"
+	    	}	
+    	];
+    	
+    	var markerTypes = [
+	    	{
+		    	name: "Sketch",
+		    	id: "sketch",
+		    	width: 1.5,
+		    	height: 1,
+		    	rx: 2.2,
+		    	ry: 2,
+		    	colours: colours.map(function(f) {return f.code})
+	    	},{
+		    	name: "Ciao",
+		    	id: "ciao",
+		    	width: 1.25,
+		    	height: 1.25,
+		    	rx: 2,
+		    	ry: 2,
+		    	colours: [
+			    	"BV000",
+			    	"BV00",
+			    	"BV02",
+			    	"BV04",
+			    	"BV08",
+			    	"BV13",
+			    	"BV17",
+			    	"BV23",
+			    	"BV25",
+			    	"BV29",
+			    	"BV31",
+			    	"V000",
+			    	"V01",
+			    	"V04",
+			    	"V05",
+			    	"V06",
+			    	"V09",
+			    	"V12",
+			    	"V15",
+			    	"V17",
+			    	"V91",
+			    	"V95",
+			    	"VR000",
+			    	"V01",
+			    	"V04",
+			    	"V05",
+			    	"V06",
+			    	"V09",
+			    	"V12",
+			    	"V15",
+			    	"V17",
+			    	"V91",
+			    	"V95",
+			    	"RV000",
+			    	"RV02",
+			    	"RV04",
+			    	"RV06",
+			    	"RV10",
+			    	"RV13",
+			    	"RV14",
+			    	"RV21",
+			    	"RV23",
+			    	"RV29",
+			    	"RV34",
+			    	"RV42",
+			    	"RV69",
+			    	"RV95",
+			    	"R000",
+			    	"R00",
+			    	"R02",
+			    	"R05",
+			    	"R11",
+			    	"R14",
+			    	"R17",
+			    	"R20",
+			    	"R22",
+			    	"R27",
+			    	"R29",
+			    	"R32",
+			    	"R35",
+			    	"R37",
+			    	"R46",
+			    	"R59",
+			    	"R81",
+			    	"R85",
+			    	"YR000",
+			    	"YR00",
+			    	"YR02",
+			    	"YR04",
+			    	"YR07",
+			    	"YR15",
+			    	"YR16",
+			    	"YR20",
+			    	"YR23",
+			    	"YR31",
+			    	"YR61",
+			    	"YR68",
+			    	"Y000",
+			    	"Y00",
+			    	"Y02",
+			    	"Y06",
+			    	"Y08",
+			    	"Y11",
+			    	"Y15",
+			    	"Y17",
+			    	"Y21",
+			    	"Y28",
+			    	"Y35",
+			    	"Y38",
+			    	"YG00",
+			    	"YG03",
+			    	"YG06",
+			    	"YG09",
+			    	"YG11",
+			    	"YG17",
+			    	"YG23",
+			    	"YG41",
+			    	"YG63",
+			    	"YG67",
+			    	"YG91",
+			    	"YG95",
+			    	"G000",
+			    	"G00",
+			    	"G02",
+			    	"G05",
+			    	"G07",
+			    	"G14",
+			    	"G17",
+			    	"G21",
+			    	"G28",
+			    	"G29",
+			    	"G82",
+			    	"G85",
+			    	"G94",
+			    	"G99",
+			    	"BG000",
+			    	"BG01",
+			    	"BG05",
+			    	"BG09",
+			    	"BG10",
+			    	"BG13",
+			    	"BG15",
+			    	"BG23",
+			    	"BG34",
+			    	"BG49",
+			    	"BG72",
+			    	"BG93",
+			    	"BG96",
+			    	"B000",
+			    	"B00",
+			    	"B02",
+			    	"B05",
+			    	"B06",
+			    	"B16",
+			    	"B32",
+			    	"B24",
+			    	"B28",
+			    	"B29",
+			    	"B32",
+			    	"B39",
+			    	"B45",
+			    	"B60",
+			    	"B63",
+			    	"B93",
+			    	"B95",
+			    	"B97",
+			    	"B99",
+			    	"E000",
+			    	"E00",
+			    	"E02",
+			    	"E04",
+			    	"E08",
+			    	"E11",
+			    	"E15",
+			    	"E18",
+			    	"E21",
+			    	"E25",
+			    	"E29",
+			    	"E31",
+			    	"E33",
+			    	"E35",
+			    	"E37",
+			    	"E40",
+			    	"E41",
+			    	"E43",
+			    	"E47",
+			    	"E49",
+			    	"E50",
+			    	"E51",
+			    	"E53",
+			    	"E57",
+			    	"E59",
+			    	"E71",
+			    	"E77",
+			    	"E79",
+			    	"E93",
+			    	"E95",
+			    	"C-00",
+			    	"C-0",
+			    	"C-1",
+			    	"C-2",
+			    	"C-3",
+			    	"C-5",
+			    	"C-7",
+			    	"W-0",
+			    	"W-1",
+			    	"W-2",
+			    	"W-3",
+			    	"W-5",
+			    	"W-7",
+			    	"0",
+			    	"100"
+		    	]
+	    	},{
+		    	name: "Wide",
+		    	id: "wide",
+		    	width: 1.9,
+		    	height: 1,
+		    	rx: 2,
+		    	ry: 2,
+		    	colours: [
+			    	"V17",
+			    	"R02",
+			    	"R27",
+			    	"R29",
+			    	"YR04",
+			    	"Y08",
+			    	"Y15",
+			    	"Y17",
+			    	"Y26",
+			    	"YG03",
+			    	"G07",
+			    	"G21",
+			    	"BG10",
+			    	"B24",
+			    	"B29",
+			    	"B39",
+			    	"B32",
+			    	"E04",
+			    	"E29",
+			    	"E31",
+			    	"E49",
+			    	"C-1",
+			    	"C-3",
+			    	"C-5",
+			    	"C-7",
+			    	"C-9",
+			    	"W-1",
+			    	"W-3",
+			    	"W-5",
+			    	"W-7",
+			    	"W-9",
+			    	"0",
+			    	"100",
+			    	"110"
+		    	]
+	    	}
+	    ];
+	    
+    	var markerSets = [
+    		{
+	    		name: "All",
+	    		id: "all",
+	    		colours: []
+    		},{
+		    	name: "Ciao 12",
+		    	id: "ciao_12",
+		    	colours: [
+			    	'BV08', 
+			    	'V09', 
+			    	'RV04', 
+			    	'R29', 
+			    	'YR07', 
+			    	'Y06', 
+			    	'YG06', 
+			    	'G17', 
+			    	'BG09', 
+			    	'B29', 
+			    	'E29', 
+			    	'100' 
+		    	]
+	    	},{
+		    	name: "Ciao 12 G",
+		    	id: "ciao_12_g",
+		    	colours: [
+			    	'C-0', 
+			    	'C-1', 
+			    	'C-2', 
+			    	'C-3', 
+			    	'C-5', 
+			    	'C-7', 
+			    	'W-0', 
+			    	'W-1', 
+			    	'W-2', 
+			    	'W-3', 
+			    	'W-5', 
+			    	'W-7'
+		    	]
+	    	},{
+		    	name: "Ciao 24",
+		    	id: "ciao_24",
+		    	colours: [
+			    	'G05', 
+			    	'BG09', 
+			    	'BG23', 
+			    	'B00', 
+			    	'B24', 
+			    	'B29', 
+			    	'E00', 
+			    	'E21', 
+			    	'E29', 
+			    	'E37', 
+			    	'C-3', 
+			    	'100', 
+			    	'BV00', 
+			    	'BV02', 
+			    	'RV02', 
+			    	'R20', 
+			    	'R29', 
+			    	'YR02', 
+			    	'YR07', 
+			    	'Y00', 
+			    	'Y08', 
+			    	'YG03', 
+			    	'YG06', 
+			    	'G00'
+		    	]
+	    	},{
+		    	name: "36 A",
+		    	id: "ciao_36_a",
+		    	colours: [
+			    	"B00",
+			    	"B24", 
+			    	"B29", 
+			    	"E00", 
+			    	"E21", 
+			    	"E29", 
+			    	"E37", 
+			    	"C3", 
+			    	"100", 
+			    	"YG03", 
+			    	"YG06", 
+			    	"YG11", 
+			    	"G00", 
+			    	"G05", 
+			    	"G17", 
+			    	"BG01", 
+			    	"BG09", 
+			    	"BG23", 
+			    	"R20", 
+			    	"R29", 
+			    	"R32", 
+			    	"YR02", 
+			    	"YR07", 
+			    	"YR20", 
+			    	"Y00", 
+			    	"Y06", 
+			    	"Y17", 
+			    	"BV00", 
+			    	"BV02", 
+			    	"BV08", 
+			    	"V04", 
+			    	"V09", 
+			    	"V12", 
+			    	"RV02", 
+			    	"RV04", 
+			    	"RV10" 
+		    	]
+	    	},{
+		    	name: "36 B",
+		    	id: "ciao_36_b",
+		    	colours: [
+			    	"E08", 
+			    	"E33", 
+			    	"E35", 
+			    	"E47", 
+			    	"E51", 
+			    	"C-1", 
+			    	"C-5", 
+			    	"C-7", 
+			    	"0", 
+			    	"BG10", 
+			    	"BG15", 
+			    	"BG93", 
+			    	"B05", 
+			    	"B23", 
+			    	"B32", 
+			    	"B39", 
+			    	"E02", 
+			    	"E04", 
+			    	"YR00", 
+			    	"YR04", 
+			    	"Y02", 
+			    	"Y08", 
+			    	"YG41", 
+			    	"YG67", 
+			    	"G02", 
+			    	"G21", 
+			    	"G99", 
+			    	"BV04", 
+			    	"V17", 
+			    	"RV21", 
+			    	"RV23", 
+			    	"RV29", 
+			    	"RV42", 
+			    	"R02", 
+			    	"R27", 
+			    	"R59" 
+		    	]
+	    	},{
+		    	name: "36 C",
+		    	id: "ciao_36_c",
+		    	colours: [
+			    	"B02", 
+			    	"B12", 
+			    	"B60", 
+			    	"B63", 
+			    	"BG05", 
+			    	"BG34", 
+			    	"BV13", 
+			    	"BV23", 
+			    	"BV31", 
+			    	"E11", 
+			    	"E31", 
+			    	"E50", 
+			    	"E53", 
+			    	"E71", 
+			    	"G000", 
+			    	"G07", 
+			    	"G14", 
+			    	"R00", 
+			    	"R05", 
+			    	"R11", 
+			    	"R22", 
+			    	"RV000", 
+			    	"RV06", 
+			    	"RV13", 
+			    	"V000", 
+			    	"V06", 
+			    	"Y11", 
+			    	"Y15", 
+			    	"Y21", 
+			    	"YG00", 
+			    	"YG23", 
+			    	"YG63", 
+			    	"YR16", 
+			    	"YR23", 
+			    	"YR31", 
+			    	"YR61"
+		    	]
+	    	},{
+		    	name: "36 D",
+		    	id: "ciao_36_d",
+		    	colours: [
+			    	"B45", 
+			    	"B93", 
+			    	"B95", 
+			    	"B97", 
+			    	"BG49", 
+			    	"BG96", 
+			    	"BV17", 
+			    	"BV29", 
+			    	"E43", 
+			    	"E49", 
+			    	"E57", 
+			    	"E77", 
+			    	"E93", 
+			    	"E95", 
+			    	"G28", 
+			    	"G85", 
+			    	"G94", 
+			    	"R17", 
+			    	"R35", 
+			    	"R37", 
+			    	"R46", 
+			    	"R85", 
+			    	"RV34", 
+			    	"RV95", 
+			    	"V15", 
+			    	"V91", 
+			    	"V95", 
+			    	"Y28", 
+			    	"Y38", 
+			    	"YG91", 
+			    	"YG95", 
+			    	"YR68", 
+			    	"W-1", 
+			    	"W-3", 
+			    	"W-5", 
+			    	"W-7"
+		    	]
+	    	},{
+		    	name: "36 E",
+		    	id: "ciao_36_e",
+		    	colours: [
+			    	'C-0', 
+			    	'C-2', 
+			    	'W-0', 
+			    	'W-2', 
+			    	'B000', 
+			    	'B18', 
+			    	'B28', 
+			    	'B99', 
+			    	'BG000', 
+			    	'BG13', 
+			    	'BG72', 
+			    	'BV000', 
+			    	'BV25', 
+			    	'E000', 
+			    	'E15', 
+			    	'E18', 
+			    	'E25', 
+			    	'E40', 
+			    	'E41', 
+			    	'E59', 
+			    	'E79', 
+			    	'G29', 
+			    	'G82', 
+			    	'R000', 
+			    	'R14', 
+			    	'R81', 
+			    	'RV14', 
+			    	'RV69', 
+			    	'V01', 
+			    	'V05', 
+			    	'Y000', 
+			    	'Y35', 
+			    	'YG09', 
+			    	'YG17', 
+			    	'YR000', 
+			    	'YR15'
+		    	]
+	    	},{
+		    	name: "72 A",
+		    	id: "ciao_72_A",
+		    	colours: [
+		    	  "BV13", 
+		    	  "BV17", 
+		    	  "BV23", 
+		    	  "BV29", 
+		    	  "BV31", 
+		    	  "V000", 
+		    	  "V06", 
+		    	  "V15", 
+		    	  "V91", 
+		    	  "V95", 
+		    	  "RV000", 
+		    	  "RV06", 
+		    	  "RV13", 
+		    	  "RV34", 
+		    	  "RV95", 
+		    	  "R00", 
+		    	  "R05", 
+		    	  "R11", 
+		    	  "R17", 
+		    	  "R22", 
+		    	  "R35", 
+		    	  "R37", 
+		    	  "R46", 
+		    	  "R85", 
+		    	  "YR16", 
+		    	  "YR23", 
+		    	  "YR31", 
+		    	  "YR61", 
+		    	  "YR68", 
+		    	  "Y11", 
+		    	  "Y15", 
+		    	  "Y21", 
+		    	  "Y28", 
+		    	  "Y38", 
+		    	  "YG00", 
+		    	  "YG23", 
+		    	  "YG63", 
+		    	  "YG91", 
+		    	  "YG95", 
+		    	  "G000", 
+		    	  "G07", 
+		    	  "G14", 
+		    	  "G28", 
+		    	  "G85", 
+		    	  "G94", 
+		    	  "BG05", 
+		    	  "BG34", 
+		    	  "BG49", 
+		    	  "BG96", 
+		    	  "B02", 
+		    	  "B12", 
+		    	  "B45", 
+		    	  "B60", 
+		    	  "B63", 
+		    	  "B93", 
+		    	  "B95", 
+		    	  "B97", 
+		    	  "E11", 
+		    	  "E31", 
+		    	  "E43", 
+		    	  "E49", 
+		    	  "E50", 
+		    	  "E53", 
+		    	  "E57", 
+		    	  "E71", 
+		    	  "E77", 
+		    	  "E93", 
+		    	  "E95", 
+		    	  "W-1", 
+		    	  "W-3", 
+		    	  "W-5", 
+		    	  "W-7"
+		    	]
+	    	},{
+		    	name: "Craft 36 A",
+		    	id: "craft_A",
+		    	colours: [
+			    	'0', 
+			    	'100',
+			    	'B00',
+			    	'B02', 
+			    	'B05', 
+			    	'B45', 
+			    	'BG05', 
+			    	'BG09', 
+			    	'BG10', 
+			    	'BV00', 
+			    	'BV04', 
+			    	'BV08', 
+			    	'C-3', 
+			    	'E00', 
+			    	'E04', 
+			    	'E33', 
+			    	'E37', 
+			    	'G02', 
+			    	'G07', 
+			    	'R20', 
+			    	'R29', 
+			    	'R59', 
+			    	'RV13', 
+			    	'RV21', 
+			    	'RV34', 
+			    	'V12', 
+			    	'V15', 
+			    	'V17', 
+			    	'Y02', 
+			    	'Y06', 
+			    	'Y21', 
+			    	'YG11', 
+			    	'YG63', 
+			    	'YG67', 
+			    	'YR00', 
+			    	'YR04'
+		    	]
+	    	},{
+		    	name: "Craft 36 B",
+		    	id: "craft_B",
+		    	colours: [
+			    	'B24',
+			    	'B32', 
+			    	'B39', 
+			    	'BG15', 
+			    	'BG34', 
+			    	'BG49', 
+			    	'BV23', 
+			    	'C-5', 
+			    	'E11', 
+			    	'E29', 
+			    	'E31', 
+			    	'E35',
+			    	'G17', 
+			    	'G21', 
+			    	'G28', 
+			    	'G85', 
+			    	'R02', 
+			    	'R32', 
+			    	'R35', 
+			    	'R37', 
+			    	'RV02', 
+			    	'RV04', 
+			    	'RV06', 
+			    	'V04', 
+			    	'V06', 
+			    	'V09', 
+			    	'W-1', 
+			    	'W-3', 
+			    	'Y11', 
+			    	'Y15', 
+			    	'Y38', 
+			    	'YG03', 
+			    	'YG41', 
+			    	'YG91', 
+			    	'YR02', 
+			    	'YR07'
+		    	]
+	    	},{
+		    	name: "Debbie Hodge 36",
+		    	id: "hodge_36",
+		    	colours: [
+			    	'B00', 
+			    	'B02', 
+			    	'B04',
+						'BG11', 
+						'BG13', 
+						'BG18', 
+						'BV00', 
+						'BV02', 
+						'BV04', 
+						'V12', 
+						'V15', 
+						'V17', 
+						'G21', 
+						'G24', 
+						'G28', 
+						'YG11', 
+						'YG13', 
+						'YG17', 
+						'Y11', 
+						'Y15', 
+						'Y19',
+						'YR04', 
+						'YR07', 
+						'YR09',
+						'R22', 
+						'R24', 
+						'R29', 
+						'RV63', 
+						'RV66', 
+						'RV69', 
+						'E33', 
+						'E35', 
+						'E37', 
+						'E25', 
+						'E27', 
+						'E29', 
+						'E00', 
+						'E02',
+						'N-1'
+		    	]
+	    	},{
+		    	name: "M4M 24",
+		    	id: "m4m_24",
+		    	colours: [
+			    	'0',
+			    	'E00',
+			    	'E11',
+			    	'E31',
+			    	'E35',
+			    	'E37',
+			    	'E51',
+			    	'E53',
+			    	'R20',
+			    	'R27',
+			    	'R29',
+			    	'B00',
+			    	'B05',
+			    	'Y00',
+			    	'Y21',
+			    	'YG11',
+			    	'YG25',
+			    	'W-1',
+			    	'C-3',
+			    	'C-7',
+			    	'RV21',
+			    	'RV23',
+			    	'G17',
+			    	'G28'
+		    	]
+	    	},{
+		    	name: "M4M 36",
+		    	id: "m4m_36",
+		    	colours: [
+			    	'B00',
+			    	'B02',
+			    	'B05',
+			    	'E00',
+			    	'E21',
+			    	'E35',
+			    	'E37',
+			    	'C-3',
+			    	'C-7',
+			    	'YG03',
+			    	'YG06',
+			    	'YG23',
+			    	'G00',
+			    	'G02',
+			    	'G05',
+			    	'BG01',
+			    	'BG15',
+			    	'BG10',
+			    	'R20',
+			    	'R32',
+			    	'R35',
+			    	'R37',
+			    	'YR02',
+			    	'YR04',
+			    	'YR07',
+			    	'Y00',
+			    	'Y06',
+			    	'Y17',
+			    	'BV00',
+			    	'BV02',
+			    	'BV04',
+			    	'V12',
+			    	'V15',
+			    	'V17',
+			    	'RB21'
+		    	]
+	    	},{
+		    	name: "Blending Trios",
+		    	id: "blending_3s",
+		    	colours: [
+			    	'G40',
+			    	'G94',
+			    	'G99',
+			    	'B12',
+			    	'B14',
+			    	'B18',
+			    	'RV63',
+			    	'RV66',
+			    	'RV69',
+			    	'R12',
+			    	'R14',
+			    	'R17',
+			    	'Y00',
+			    	'Y13',
+			    	'Y18',
+			    	'E95',
+			    	'E97',
+			    	'E99',
+			    	'E70',
+			    	'E74',
+			    	'E79'
+		    	]
+	    	},{
+		    	name: "Fusion Trios",
+		    	id: "fusion_3s",
+		    	colours: [
+			    	'V20',
+			    	'V22',
+			    	'V25',
+			    	'RV000',
+			    	'RV52',
+			    	'RV55',
+			    	'E04',
+			    	'R56',
+			    	'R59',
+			    	'YR20',
+			    	'YR23',
+			    	'YR27',
+			    	'G40',
+			    	'G43',
+			    	'G46',
+			    	'B01',
+			    	'B04',
+			    	'B06'
+		    	]
+	    	},{
+		    	name: "Traci",
+		    	id: "traci",
+		    	colours: [
+			    	'R00', 
+			    	'E00',
+			    	'E11',
+			    	'R20',
+						'E50',
+						'E53',
+						'E55',
+						'E57',
+						'R22',
+						'R24',
+						'R27',
+						'R29',
+						'R39',
+						'B91',
+						'B93',
+						'B95',
+						'B97',
+						'B99',
+						'YG03',
+						'YG25',
+						'YG17',
+						'Y02',
+						'Y06',
+						'Y08',
+						'YR15',
+						'YR16',
+						'YR18',
+						'R81',
+						'R83',
+						'R85',
+						'V01',
+						'V15',
+						'V06'
+		    	]
+	    	}
+    	]
+    	
+    	
+    	var markerDefaultSize = 40;
+    	var markerMargin = 5;
+    	var markerSizeMultiplier = 1;
+    	var columns = families.length;
+    	var colour_families = families.map(function(f){
+	    	return colours.filter(function(c) {
+	    		return c.family === f;
+	    	}).length;
+    	});
+    	var rows = Math.max(...colour_families);
+    	
+    	var selectedMarkerType = markerTypes[0];
+    	
+    	markerSets[0].colours = selectedMarkerType.colours;
+    	
+    	var selectedMarkerSet = markerSets[0];
+    	
+    	var setupMarkers = function() {
+	    	
+	    	var markerHeight = selectedMarkerType.height * markerDefaultSize * markerSizeMultiplier;
+	    	var markerWidth  = selectedMarkerType.width  * markerDefaultSize * markerSizeMultiplier;
+	    	var rx = markerWidth / selectedMarkerType.rx;
+	    	var ry = markerHeight / selectedMarkerType.ry;
+	    		    	
+	    	d3.select("svg")
+	    		.attr("width", columns * (markerWidth + markerMargin) + markerMargin)
+	    		.attr("height", rows * (markerHeight + markerMargin));
+	    	
+	    	d3.select(".colours")
+	    		.selectAll("rect")
+	    		.remove();
+	    	
+	    	d3.select(".colours")
+	    		.selectAll("rect")
+	    		.data(colours)
+	    		.enter()
+	    		.append("rect")
+	    		.classed({"marker": true, "selected": function(d) {
+		    		return selectedMarkerSet.colours.includes(d.code) && selectedMarkerType.colours.includes(d.code);
+	    		}, "available": function(d) {
+		    		return selectedMarkerType.colours.includes(d.code);
+		    	}, "highlighted": function(d) {
+			    	return d.highlighted;
+		    	}, "missing": function(d) {
+			    	return selectedMarkerSet.colours.includes(d.code) && !selectedMarkerType.colours.includes(d.code);
+	    		}})
+	    		.style("fill", function(d) {return d.colour})
+	    		.attr("height", markerHeight)
+	    		.attr("width", markerWidth)
+	    		.attr("rx", rx)
+	    		.attr("ry", ry)
+	    		.attr("id", function(d) {return d.code})
+	    		.attr("y", function(d) {
+		    		var family = colours.filter(function(c) {return c.family === d.family});
+		    		var i = family.indexOf(d);
+	    			return i * (markerHeight + markerMargin);
+	    		}).attr("x", function(d, i) {
+	    			return (families.indexOf(d.family)) * (markerWidth + markerMargin);
+	    		}).text(function(d) {return d.code})
+	    		.on('click', function(d) {
+		    		d.highlighted = !d.highlighted;
+		    		$("#" + d.code)[0].classList.toggle("highlighted");
+	    		});
+	    		
+	    	
+	    	d3.select(".labels")
+	    		.selectAll("text")
+	    		.remove();
+	    		
+	    	d3.select(".labels")
+	    		.selectAll("text")
+	    		.data(colours)
+	    		.enter()
+	    		.append("text")
+	    		.classed({"code": true, "selected": function(d) {
+		    		return selectedMarkerSet.colours.includes(d.code) && selectedMarkerType.colours.includes(d.code);
+	    		}, "available": function(d) {
+		    		return selectedMarkerType.colours.includes(d.code);
+		    	}, "missing": function(d) {
+			    	return selectedMarkerSet.colours.includes(d.code) && !selectedMarkerType.colours.includes(d.code);
+	    		}})
+	    		.style("fill", labelColour)
+	    		.attr("dx", markerWidth / 2)
+	    		.attr("dy", markerHeight / 4)
+	    		.attr("y", function(d) {
+		    		var family = colours.filter(function(c) {return c.family === d.family});
+		    		var i = family.indexOf(d);
+	    			return i * (markerHeight + markerMargin) + 4;
+	    		}).attr("x", function(d, i) {
+	    			return (families.indexOf(d.family)) * (markerWidth + markerMargin);
+	    		}).text(function(d) {return d.code})
+	    		.style("font-size", markerSizeMultiplier / 1.1 + "em")
+	    		.on('click', function(d) {
+		    		d.highlighted = !d.highlighted;
+		    		$("#" + d.code)[0].classList.toggle("highlighted");
+	    		});
+	    	
+	    	
+	    	d3.select(".names")
+	    		.selectAll("foreignObject")
+	    		.remove();
+	    	
+	    	d3.select(".names")
+	    		.selectAll("foreignObject")
+	    		.data(colours)
+	    		.enter()
+	    		.append("foreignObject")
+	    		.attr("width", markerWidth)
+	    		.attr("height", markerHeight / 2)
+	    		.attr("y", function(d) {
+		    		var family = colours.filter(function(c) {return c.family === d.family});
+		    		var i = family.indexOf(d);
+	    			return i * (markerHeight + markerMargin) + markerHeight / 2;
+	    		}).attr("x", function(d, i) {
+	    			return (families.indexOf(d.family)) * (markerWidth + markerMargin);
+	    		}).append("xhtml:div")
+	    		.classed({"name": true, "selected": function(d) {
+		    		return selectedMarkerSet.colours.includes(d.code) && selectedMarkerType.colours.includes(d.code);
+		    	}, "missing": function(d) {
+			    	return selectedMarkerSet.colours.includes(d.code) && !selectedMarkerType.colours.includes(d.code);
+	    		}, "available": function(d) {
+		    		return selectedMarkerType.colours.includes(d.code);
+	    		}})
+	    		.style("color", labelColour)
+	    		.style("font-size", markerSizeMultiplier / 2 + "em")
+	    		.text(function(d) {return d.name})
+	    		.on('click', function(d) {
+		    		d.highlighted = !d.highlighted;
+		    		$("#" + d.code)[0].classList.toggle("highlighted");
+	    		});
+	    	
+    	};
+    	
+    	var randomColour = colours[Math.floor(Math.random() * colours.length)];
+    	
+    	var labelColour = function(d){
+    		var red = parseInt(d.colour.substring(1,3), 16);
+    		var green = parseInt(d.colour.substring(3,5), 16);
+    		var blue = parseInt(d.colour.substring(5,7), 16);
+    		var limit = 180;
+    		if ((red > limit && blue > limit) || (red > limit && green > limit) || (green > limit && blue > limit)) {
+	    		return "black";
+    		}
+    		return "white";
+  		};
+    	
+    		
+    	setupMarkers();
+    	
+    	d3.select(".types")
+    		.selectAll("label")
+    		.data(markerTypes)
+    		.enter()
+    		.append("label")
+    		.classed({"btn": true, "btn-secondary": true, "active": function(d){
+    	  	return d.id == selectedMarkerType.id ? true : null;
+    	  }})
+    	  .text(function(d){return d.name})
+    	  .on("click", function(d) {
+	    	  selectedMarkerType = d;
+		    	markerSets[0].colours = selectedMarkerType.colours;
+	    	  setupMarkers();
+    	  })
+    	  .append("input")
+    	  .attr("type", "radio")
+    	  .attr("name", "options")
+    	  .attr("id", function(d){return d.id})
+    	  .attr("checked", function(d){
+    	  	return d.id == selectedMarkerType.id ? true : null;
+    	  })
+    	  .attr("autocomplete", "off");
+    		
+    	d3.select(".sets")
+    	  .selectAll("label")
+    	  .data(markerSets)
+    	  .enter()
+    	  .append("label")
+    	  .classed({"btn": true, "btn-secondary": true, "active": function(d){
+    	  	return d.id == selectedMarkerSet.id ? true : null;
+    	  }})
+    	  .text(function(d){return d.name})
+    	  .on("click", function(d) {
+	    	  selectedMarkerSet = d;
+	    	  setupMarkers();
+    	  })
+    	  .append("input")
+    	  .attr("type", "radio")
+    	  .attr("name", "options")
+    	  .attr("id", function(d){return d.id})
+    	  .attr("checked", function(d){
+    	  	return d.id == selectedMarkerSet.id ? true : null;
+    	  })
+    	  .attr("autocomplete", "off");
+    	  
+    	 $(".zoom-in").click(function() {
+	    	 markerSizeMultiplier *= 1.1;
+				 setupMarkers();
+    	 });
+    	 
+    	 
+    	 $(".zoom-out").click(function() {
+	    	 markerSizeMultiplier /= 1.1;
+				 setupMarkers();
+    	 });
+    	
+    </script>
+    
+  </body>
+</html>
